@@ -360,7 +360,7 @@ extern spellElement_t spellElement_charmMonster;
  * Spells give you discounts. So it's more expensive to cast 5 fireball spells than a single spell which creates 5 fireballs.
  */
 //TODO: Here's a good question: How do we determine spell casting times? By the total mana you need to amass & magic skills?
-typedef struct spell_t
+/*typedef*/ struct spell_t
 {
 	int ID;
 	char name[64];
