@@ -22,6 +22,7 @@ set(OPENAL 0) #Acts as an alias to OPENAL_FOUND
 option(OPENAL_ENABLED "Use the OpenAL library in the sound engine" OFF)
 set(TREMOR 0)
 option(TREMOR_ENABLED "Use Tremor instead of libvorbis for OpenAL" OFF)
+option(USE_CCACHE "Set to ON to use ccache if present in the system" ${USE_CCACHE})
 
 if(FMOD_ENABLED AND OPENAL_ENABLED)
   set(FMOD_ENABLED OFF)
@@ -31,6 +32,14 @@ set(PANDORA 0)
 option(PANDORA_ENABLED "Build for the OpenPandora" OFF)
 if(PANDORA_ENABLED)
   set(PANDORA 1)
+endif()
+
+if(USE_CCACHE)
+    find_program(CCACHE_FOUND ccache)
+    if(CCACHE_FOUND)
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+    endif()
 endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
