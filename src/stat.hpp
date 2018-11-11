@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "Config.hpp"
 #ifdef USE_FMOD
 #include "fmod.h"
 #endif
