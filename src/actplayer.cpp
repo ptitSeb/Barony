@@ -2669,14 +2669,14 @@ void actPlayer(Entity* my)
 			}
 
 
-			real_t speedFactor = std::min((my->getDEX() * 0.1 + 15.5) * weightratio, 25 * 0.5 + 10);
+			real_t speedFactor = std::min<real_t>((my->getDEX() * 0.1 + 15.5) * weightratio, 25 * 0.5 + 10);
 			if ( my->getDEX() <= 5 )
 			{
-				speedFactor = std::min((my->getDEX() + 10) * weightratio, 25 * 0.5 + 10);
+				speedFactor = std::min<real_t>((my->getDEX() + 10) * weightratio, 25 * 0.5 + 10);
 			}
 			else if ( my->getDEX() <= 15 )
 			{
-				speedFactor = std::min((my->getDEX() * 0.2 + 14) * weightratio, 25 * 0.5 + 10);
+				speedFactor = std::min<real_t>((my->getDEX() * 0.2 + 14) * weightratio, 25 * 0.5 + 10);
 			}
 			PLAYER_VELX += y_force * cos(my->yaw) * .045 * speedFactor / (1 + (stats[PLAYER_NUM]->defending || stats[PLAYER_NUM]->sneaking == 1));
 			PLAYER_VELY += y_force * sin(my->yaw) * .045 * speedFactor / (1 + (stats[PLAYER_NUM]->defending || stats[PLAYER_NUM]->sneaking == 1));
