@@ -957,7 +957,7 @@ int loadMap(const char* filename2, map_t* destmap, list_t* entlist, list_t* crea
 							{
 								freadBE(&dummyStats->EDITOR_ITEMS, sizeof(Sint32), 96, fp);
 							}
-							fread(&dummyStats->MISC_FLAGS, sizeof(Sint32), 32, fp);
+							freadBE(&dummyStats->MISC_FLAGS, sizeof(Sint32), 32, fp);
 						}
 						break;
 					case 2:
@@ -2611,3 +2611,27 @@ void physfsReloadSystemImages()
 		}
 	}
 }
+
+#ifdef __amigaos4__
+size_t freadBE(void *ptr, size_t size, size_t nmemb, FILE *stream)
+{
+	size_t ret = fread(ptr, size, nmemb, stream);
+	char* p = (char*)ptr;
+	for (int i=0; i<nmemb; ++i) {
+		littleBigEndian(p, size);
+		p+=size;
+	}
+	return ret;
+}
+size_t fwriteBE(const void *ptr, size_t size, size_t nmemb, FILE *stream)
+{
+	char* tmp[size*nmemb];
+	memcpy(tmp, ptr, size*nmemb);
+	char* p = tmp;
+	for (int i=0; i<nmemb; ++i) {
+		littleBigEndian(p, size);
+		p+=size;
+	}
+	return fwrite(tmp, size, nmemb, stream);
+}
+#endif
