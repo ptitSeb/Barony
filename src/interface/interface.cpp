@@ -662,16 +662,20 @@ void defaultImpulses()
 	impulses[IN_LEFT] = 80;
 	impulses[IN_BACK] = 81;
 	impulses[IN_RIGHT] = 79;
+	impulses[IN_TURNL] = 4;
+	impulses[IN_TURNR] = 7;
+	impulses[IN_UP] = 26;
+	impulses[IN_DOWN] = 22;
 #else
 	impulses[IN_FORWARD] = 26;
 	impulses[IN_LEFT] = 4;
 	impulses[IN_BACK] = 22;
 	impulses[IN_RIGHT] = 7;
-#endif
 	impulses[IN_TURNL] = 80;
 	impulses[IN_TURNR] = 79;
 	impulses[IN_UP] = 82;
 	impulses[IN_DOWN] = 81;
+#endif
 	impulses[IN_CHAT] = 40;
 	impulses[IN_COMMAND] = 56;
 	impulses[IN_STATUS] = 43;
