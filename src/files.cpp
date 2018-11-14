@@ -806,6 +806,10 @@ int loadMap(const char* filename2, map_t* destmap, list_t* entlist, list_t* crea
 		mapHashData += destmap->tiles[c];
 	}
 
+#ifdef USE_FLOAT
+	double dDummy;
+#endif
+
 	for (c = 0; c < numentities; c++)
 	{
 		freadBE(&sprite, sizeof(Sint32), 1, fp);
@@ -941,7 +945,12 @@ int loadMap(const char* filename2, map_t* destmap, list_t* entlist, list_t* crea
 						}
 						break;
 					case 2:
-						freadBE(&entity->yaw, sizeof(real_t), 1, fp);	// TODO: check is real_t or double!
+						#ifdef USE_FLOAT
+						freadBE(&dDummy, sizeof(double), 1, fp);
+						entity->yaw = dDummy;
+						#else
+						freadBE(&entity->yaw, sizeof(double), 1, fp);
+						#endif
 						freadBE(&entity->skill[9], sizeof(Sint32), 1, fp);
 						freadBE(&entity->chestLocked, sizeof(Sint32), 1, fp);
 						break;
@@ -965,7 +974,12 @@ int loadMap(const char* filename2, map_t* destmap, list_t* entlist, list_t* crea
 						freadBE(&entity->skill[5], sizeof(Sint32), 1, fp);
 						break;
 					case 5:
-						freadBE(&entity->yaw, sizeof(real_t), 1, fp);	// TODO: Check if real_t or double!
+						#ifdef USE_FLOAT
+						freadBE(&dDummy, sizeof(double), 1, fp);
+						entity->yaw = dDummy;
+						#else
+						freadBE(&entity->yaw, sizeof(double), 1, fp);
+						#endif
 						freadBE(&entity->crystalNumElectricityNodes, sizeof(Sint32), 1, fp);
 						freadBE(&entity->crystalTurnReverse, sizeof(Sint32), 1, fp);
 						freadBE(&entity->crystalSpellToActivate, sizeof(Sint32), 1, fp);
@@ -1221,6 +1235,9 @@ int saveMap(const char* filename2)
 	char filename[256];
 	Sint32 x, y;
 	Stat* myStats;
+	#ifdef USE_FLOAT
+	double dDummy;
+	#endif
 
 	if ( filename2 != NULL && strcmp(filename2, "") )
 	{
@@ -1302,7 +1319,12 @@ int saveMap(const char* filename2)
 					break;
 				case 2:
 					// chests
-					fwriteBE(&entity->yaw, sizeof(real_t), 1, fp);	// probably double here!
+					#ifdef USE_FLOAT
+					dDummy = entity->yaw;
+					fwriteBE(&dDummy, sizeof(double), 1, fp);
+					#else
+					fwriteBE(&entity->yaw, sizeof(double), 1, fp);
+					#endif
 					fwriteBE(&entity->skill[9], sizeof(Sint32), 1, fp);
 					fwriteBE(&entity->chestLocked, sizeof(Sint32), 1, fp);
 					break;
@@ -1324,7 +1346,12 @@ int saveMap(const char* filename2)
 					fwriteBE(&entity->skill[5], sizeof(Sint32), 1, fp);
 					break;
 				case 5:
-					fwriteBE(&entity->yaw, sizeof(real_t), 1, fp);	//TODO: probably double here!
+					#ifdef USE_FLOAT
+					dDummy = entity->yaw;
+					fwriteBE(&dDummy, sizeof(double), 1, fp);
+					#else
+					fwriteBE(&entity->yaw, sizeof(double), 1, fp);
+					#endif
 					fwriteBE(&entity->crystalNumElectricityNodes, sizeof(Sint32), 1, fp);
 					fwriteBE(&entity->crystalTurnReverse, sizeof(Sint32), 1, fp);
 					fwriteBE(&entity->crystalSpellToActivate, sizeof(Sint32), 1, fp);

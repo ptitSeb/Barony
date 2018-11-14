@@ -13,6 +13,7 @@
 
 #ifdef __arm__
 typedef float real_t;
+#define USE_FLOAT
 #else
 typedef double real_t;
 #endif
