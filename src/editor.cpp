@@ -1339,6 +1339,10 @@ int main(int argc, char** argv)
 
 #ifdef WINDOWS
 	strcpy(outputdir, "./");
+#elif __amigaos4__
+	strcpy(outputdir, "PROGDIR:.barony");
+	if(access(outputdir, F_OK) == -1)
+		mkdir(outputdir, 0777);
 #else
 	char *basepath = getenv("HOME");
 	snprintf(outputdir, sizeof(outputdir), "%s/.barony", basepath);
