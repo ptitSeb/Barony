@@ -10,9 +10,9 @@
 
 -------------------------------------------------------------------------------*/
 
+#include "main.hpp"
 #include "draw.hpp"
 #include "messages.hpp"
-#include "main.hpp"
 
 Uint32 old_sdl_ticks;
 std::list<Message*> notification_messages;

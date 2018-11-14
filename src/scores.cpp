@@ -3377,7 +3377,13 @@ void updateGameplayStatisticsInMainLoop()
 
 std::string setSaveGameFileName(bool singleplayer, bool followersFile, int saveIndex)
 {
+#ifdef __amigaos4__
+	char buff[50] = {0};
+	sprintf(buff, "savegames/savegame%d", saveIndex);
+	std::string filename = buff;
+#else
 	std::string filename = "savegames/savegame" + std::to_string(saveIndex);
+#endif
 
 	//OLD FORMAT
 	//#define SAVEGAMEFILE "savegame.dat"

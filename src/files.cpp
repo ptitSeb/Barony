@@ -564,7 +564,6 @@ SDL_Surface* loadImage(char* filename)
 		exit(1); // critical error
 		return NULL;
 	}
-
 	// translate the original surface to an RGBA surface
 	//int w = pow(2, ceil( log(std::max(originalSurface->w,originalSurface->h))/log(2) ) ); // round up to the nearest power of two
 	SDL_Surface* newSurface = SDL_CreateRGBSurface(0, originalSurface->w, originalSurface->h, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
@@ -1631,7 +1630,11 @@ int physfsLoadMapFile(int levelToLoad, Uint32 seed, bool useRandSeed, int* check
 				// found a percentage for secret levels to spawn.
 				parameterStr = mapName.substr(secretChanceFound + strlen(" secret%: "));
 				parameterStr = parameterStr.substr(0, parameterStr.find_first_of(" \0"));
+#ifdef __amigaos4__
+				std::get<LEVELPARAM_CHANCE_SECRET>(mapParameters) = std::atoi(parameterStr.c_str());
+#else
 				std::get<LEVELPARAM_CHANCE_SECRET>(mapParameters) = std::stoi(parameterStr);
+#endif
 				if ( std::get<LEVELPARAM_CHANCE_SECRET>(mapParameters) < 0 || std::get<LEVELPARAM_CHANCE_SECRET>(mapParameters) > 100 )
 				{
 					std::get<LEVELPARAM_CHANCE_SECRET>(mapParameters) = -1;

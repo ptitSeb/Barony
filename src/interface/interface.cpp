@@ -1809,9 +1809,9 @@ void FollowerRadialMenu::drawFollowerMenu()
 				xres / 2 + (radius + thickness) * cos(angleStart), yres / 2 - (radius + thickness) * sin(angleStart), uint32ColorGray(*mainsurface), 192);
 			drawLine(xres / 2 + (radius - thickness) * cos(angleEnd), yres / 2 - (radius - thickness) * sin(angleEnd),
 				xres / 2 + (radius + thickness - 1) * cos(angleEnd), yres / 2 - (radius + thickness - 1) * sin(angleEnd), uint32ColorGray(*mainsurface), 192);
-#ifdef PANDORA
-                        drawArcInvertedY(xres / 2, yres / 2, radius - thickness, round((angleStart * 180) / PI), ((angleEnd * 180) / PI), uint32ColorGray(*mainsurface), 192);
-                        drawArcInvertedY(xres / 2, yres / 2, (radius + thickness), round((angleStart * 180) / PI), ((angleEnd * 180) / PI) + 1, uint32ColorGray(*mainsurface), 192);
+#if defined(PANDORA) || defined(__amigaos4__)
+			drawArcInvertedY(xres / 2, yres / 2, radius - thickness, round((angleStart * 180) / PI), ((angleEnd * 180) / PI), uint32ColorGray(*mainsurface), 192);
+			drawArcInvertedY(xres / 2, yres / 2, (radius + thickness), round((angleStart * 180) / PI), ((angleEnd * 180) / PI) + 1, uint32ColorGray(*mainsurface), 192);
 #else
 			drawArcInvertedY(xres / 2, yres / 2, radius - thickness, std::round((angleStart * 180) / PI), ((angleEnd * 180) / PI), uint32ColorGray(*mainsurface), 192);
 			drawArcInvertedY(xres / 2, yres / 2, (radius + thickness), std::round((angleStart * 180) / PI), ((angleEnd * 180) / PI) + 1, uint32ColorGray(*mainsurface), 192);
@@ -1859,7 +1859,7 @@ void FollowerRadialMenu::drawFollowerMenu()
 							xres / 2 + (radius + thickness) * cos(angleStart), yres / 2 - (radius + thickness) * sin(angleStart), borderColor, 192);
 						drawLine(xres / 2 + (radius - thickness) * cos(angleEnd), yres / 2 - (radius - thickness) * sin(angleEnd),
 							xres / 2 + (radius + thickness - 1) * cos(angleEnd), yres / 2 - (radius + thickness - 1) * sin(angleEnd), borderColor, 192);
-#ifdef PANDORA
+#if defined(PANDORA) || defined(__amigaos4__)
 						drawArcInvertedY(xres / 2, yres / 2, radius - thickness, round((angleStart * 180) / PI), ((angleEnd * 180) / PI), borderColor, 192);
 						drawArcInvertedY(xres / 2, yres / 2, (radius + thickness), round((angleStart * 180) / PI), ((angleEnd * 180) / PI) + 1, borderColor, 192);
 #else
