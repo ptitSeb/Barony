@@ -17,6 +17,25 @@
 #include <cstdio>
 #include <dirent.h>
 
+ #ifdef __amigaos4__
+// generic little->big conversion
+template <class T> inline void littleBigEndian (T *x) {
+	unsigned char *toConvert = reinterpret_cast<unsigned char *>(x);
+	unsigned char tmp;
+	const int sz = sizeof(T);
+	for (size_t i = 0; i < sz/2; ++i) {
+		tmp = toConvert[i];
+		toConvert[i] = toConvert[sz - i - 1];
+		toConvert[sz - i - 1] = tmp;
+	}
+}
+#define freadBE(A, B, C, D) fread(A, B, C, D); littleBigEndian(A)
+#define fwriteBE(A, B, C, D) fwrite(A, B, C, D); littleBigEndian(A)
+#else
+#define freadBE fread
+#define fwriteBE fwrite
+#endif
+
 extern char datadir[PATH_MAX]; //PATH_MAX as defined in main.hpp -- maybe define in Config.hpp?
 extern char outputdir[PATH_MAX];
 void glLoadTexture(SDL_Surface* image, int texnum);
