@@ -461,7 +461,8 @@ const std::vector<std::string> officialSecretlevelsTxtOrder =
 
 void glLoadTexture(SDL_Surface* image, int texnum)
 {
-	SDL_LockSurface(image);
+	if(SDL_MUSTLOCK(image))
+		SDL_LockSurface(image);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, texid[texnum]);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -473,9 +474,13 @@ void glLoadTexture(SDL_Surface* image, int texnum)
 	//#ifdef APPLE
 	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, image->w, image->h, 0, GL_BGRA_EXT, GL_UNSIGNED_INT_8_8_8_8_REV, image->pixels);
 	//#else
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->w, image->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image->pixels);
+	if(image->format->BitsPerPixel==32)
+		glTexImage2D(GL_TEXTURE_2D, 0, 4, image->w, image->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image->pixels);
+	else
+		glTexImage2D(GL_TEXTURE_2D, 0, 3, image->w, image->h, 0, GL_RGB, GL_UNSIGNED_BYTE, image->pixels);
 	//#endif
-	SDL_UnlockSurface(image);
+	if(SDL_MUSTLOCK(image))
+		SDL_UnlockSurface(image);
 }
 
 
@@ -566,16 +571,27 @@ SDL_Surface* loadImage(char* filename)
 	}
 	// translate the original surface to an RGBA surface
 	//int w = pow(2, ceil( log(std::max(originalSurface->w,originalSurface->h))/log(2) ) ); // round up to the nearest power of two
-	SDL_Surface* newSurface = SDL_CreateRGBSurface(0, originalSurface->w, originalSurface->h, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
-	SDL_BlitSurface(originalSurface, NULL, newSurface, NULL); // blit onto a purely RGBA Surface
+	if(originalSurface->format->BitsPerPixel<24) {
+#ifdef __amigaos4__
+		SDL_Surface* newSurface = SDL_CreateRGBSurface(0, originalSurface->w, originalSurface->h, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
+#else	
+		SDL_Surface* newSurface = SDL_CreateRGBSurface(0, originalSurface->w, originalSurface->h, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
+#endif
+		SDL_BlitSurface(originalSurface, NULL, newSurface, NULL); // blit onto a purely RGBA Surface
+		// load the new surface as a GL texture
+		allsurfaces[imgref] = newSurface;
+		allsurfaces[imgref]->refcount = imgref + 1; // because refcount will be decremented...
+		glLoadTexture(allsurfaces[imgref], imgref);
 
-	// load the new surface as a GL texture
-	allsurfaces[imgref] = newSurface;
-	allsurfaces[imgref]->refcount = imgref + 1;
-	glLoadTexture(allsurfaces[imgref], imgref);
-
-	// free the translated surface
-	SDL_FreeSurface(originalSurface);
+		// free the translated surface
+		SDL_FreeSurface(originalSurface);
+	} else {
+		allsurfaces[imgref] = originalSurface;
+		allsurfaces[imgref]->refcount = imgref/* + 1*/;
+		glLoadTexture(allsurfaces[imgref], imgref);
+	}
+	//TODO: having SDL_surface->refcount beeing the ID of the textid is not handy
+	// would be better to use SDL_surface->userdata (that's a void*)
 
 	imgref++;
 	return allsurfaces[imgref - 1];
