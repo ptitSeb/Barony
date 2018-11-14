@@ -4518,7 +4518,7 @@ int main(int argc, char** argv)
 									else
 									{
 										color = SDL_MapRGB(mainsurface->format, 0, 255, 0);
-										char tmpStr[32] = "";
+										char tmpStr[40] = "";
 										strcpy(tmpStr, spriteProperties[i]); //reset
 										strcat(tmpStr, " Tiles to power in facing direction");
 										printTextFormattedColor(font8x8_bmp, pad_x3, pad_y2, color, tmpStr);
