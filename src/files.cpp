@@ -458,6 +458,13 @@ const std::vector<std::string> officialSecretlevelsTxtOrder =
 	Binds the given image to an opengl texture name
 
 -------------------------------------------------------------------------------*/
+int npot(int n) {
+    if (n == 0) return 0;
+
+    int i = 1;
+    while (i < n) i <<= 1;
+    return i;
+}
 
 void glLoadTexture(SDL_Surface* image, int texnum)
 {
@@ -466,8 +473,9 @@ void glLoadTexture(SDL_Surface* image, int texnum)
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, texid[texnum]);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	bool isNpot=((npot(image->w)==image->w) && (npot(image->h)==image->h));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, isNpot?GL_REPEAT:GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, isNpot?GL_REPEAT:GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
