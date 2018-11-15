@@ -2625,7 +2625,7 @@ size_t freadBE(void *ptr, size_t size, size_t nmemb, FILE *stream)
 }
 size_t fwriteBE(const void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
-	char* tmp[size*nmemb];
+	char tmp[size*nmemb];
 	memcpy(tmp, ptr, size*nmemb);
 	char* p = tmp;
 	for (int i=0; i<nmemb; ++i) {
