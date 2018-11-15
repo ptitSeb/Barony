@@ -336,7 +336,11 @@ void drawMinimap()
 				}
 				else
 				{
-					glColor4f(((Uint8)(color >> mainsurface->format->Rshift)) / 255.f, ((Uint8)(color >> mainsurface->format->Gshift)) / 255.f, ((Uint8)(color >> mainsurface->format->Bshift)) / 255.f, 1);
+					#ifdef __amigaos4__
+					glColor4f(((Uint8)(color >> 24)) / 255.f, ((Uint8)(color >> 16)) / 255.f, ((Uint8)(color >> 8)) / 255.f, 1);
+					#else
+					glColor4f(((Uint8)(color >> 0)) / 255.f, ((Uint8)(color >> 8)) / 255.f, ((Uint8)(color >> 16)) / 255.f, 1);
+					#endif
 					glBegin(GL_POINTS);
 					glVertex2f( x, y );
 					glEnd();
@@ -394,7 +398,11 @@ void drawMinimap()
 					}
 					else
 					{
-						glColor4f(((Uint8)(color >> mainsurface->format->Rshift)) / 255.f, ((Uint8)(color >> mainsurface->format->Gshift)) / 255.f, ((Uint8)(color >> mainsurface->format->Bshift)) / 255.f, 1);
+						#ifdef __amigaos4__
+						glColor4f(((Uint8)(color >> 24)) / 255.f, ((Uint8)(color >> 16)) / 255.f, ((Uint8)(color >> 8)) / 255.f, 1);
+						#else
+						glColor4f(((Uint8)(color >> 0)) / 255.f, ((Uint8)(color >> 8)) / 255.f, ((Uint8)(color >> 16)) / 255.f, 1);
+						#endif
 						glBegin(GL_POINTS);
 						glVertex2f( xres - map.width * minimapTotalScale + (int)(entity->x / (16.f / minimapTotalScale)) + x, map.height * minimapTotalScale - (int)(entity->y / (16.f / minimapTotalScale)) - y );
 						glEnd();

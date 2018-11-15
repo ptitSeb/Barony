@@ -211,7 +211,11 @@ void drawArc( int x, int y, real_t radius, real_t angle1, real_t angle2, Uint32 
 	glLineWidth(2);
 
 	// draw line
-	glColor4f(((Uint8)(color >> mainsurface->format->Rshift)) / 255.f, ((Uint8)(color >> mainsurface->format->Gshift)) / 255.f, ((Uint8)(color >> mainsurface->format->Bshift)) / 255.f, alpha / 255.f);
+	#ifdef __amigaos4__
+	glColor4f(((Uint8)(color >> 24)) / 255.f, ((Uint8)(color >> 16)) / 255.f, ((Uint8)(color >> 8)) / 255.f, alpha / 255.f);
+	#else
+	glColor4f(((Uint8)(color >> 0)) / 255.f, ((Uint8)(color >> 8)) / 255.f, ((Uint8)(color >> 16)) / 255.f, alpha / 255.f);
+	#endif
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glEnable(GL_LINE_SMOOTH);
 	glBegin(GL_LINE_STRIP);
@@ -255,7 +259,11 @@ void drawArcInvertedY(int x, int y, real_t radius, real_t angle1, real_t angle2,
 	glLineWidth(2);
 
 	// draw line
-	glColor4f(((Uint8)(color >> mainsurface->format->Rshift)) / 255.f, ((Uint8)(color >> mainsurface->format->Gshift)) / 255.f, ((Uint8)(color >> mainsurface->format->Bshift)) / 255.f, alpha / 255.f);
+	#ifdef __amigaos4__
+	glColor4f(((Uint8)(color >> 24)) / 255.f, ((Uint8)(color >> 16)) / 255.f, ((Uint8)(color >> 8)) / 255.f, alpha / 255.f);
+	#else
+	glColor4f(((Uint8)(color >> 0)) / 255.f, ((Uint8)(color >> 8)) / 255.f, ((Uint8)(color >> 16)) / 255.f, alpha / 255.f);
+	#endif
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glEnable(GL_LINE_SMOOTH);
 	glBegin(GL_LINE_STRIP);
@@ -297,7 +305,11 @@ void drawLine( int x1, int y1, int x2, int y2, Uint32 color, Uint8 alpha )
 	glLineWidth(2);
 
 	// draw line
-	glColor4f(((Uint8)(color >> mainsurface->format->Rshift)) / 255.f, ((Uint8)(color >> mainsurface->format->Gshift)) / 255.f, ((Uint8)(color >> mainsurface->format->Bshift)) / 255.f, alpha / 255.f);
+	#ifdef __amigaos4__
+	glColor4f(((Uint8)(color >> 24)) / 255.f, ((Uint8)(color >> 16)) / 255.f, ((Uint8)(color >> 8)) / 255.f, alpha / 255.f);
+	#else
+	glColor4f(((Uint8)(color >> 0)) / 255.f, ((Uint8)(color >> 8)) / 255.f, ((Uint8)(color >> 16)) / 255.f, alpha / 255.f);
+	#endif
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glEnable(GL_LINE_SMOOTH);
 	glBegin(GL_LINES);
@@ -343,7 +355,11 @@ int drawRect( SDL_Rect* src, Uint32 color, Uint8 alpha )
 	}
 
 	// draw quad
-	glColor4f(((Uint8)(color >> mainsurface->format->Rshift)) / 255.f, ((Uint8)(color >> mainsurface->format->Gshift)) / 255.f, ((Uint8)(color >> mainsurface->format->Bshift)) / 255.f, alpha / 255.f);
+	#ifdef __amigaos4__
+	glColor4f(((Uint8)(color >> 24)) / 255.f, ((Uint8)(color >> 16)) / 255.f, ((Uint8)(color >> 8)) / 255.f, alpha / 255.f);
+	#else
+	glColor4f(((Uint8)(color >> 0)) / 255.f, ((Uint8)(color >> 8)) / 255.f, ((Uint8)(color >> 16)) / 255.f, alpha / 255.f);
+	#endif
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBegin(GL_QUADS);
 	glVertex2f(src->x, yres - src->y);
@@ -493,21 +509,37 @@ void drawImageColor( SDL_Surface* image, SDL_Rect* src, SDL_Rect* pos, Uint32 co
 
 	// draw a textured quad
 	glBindTexture(GL_TEXTURE_2D, texid[image->refcount]);
-	real_t r = ((Uint8)(color >> mainsurface->format->Rshift)) / 255.f;
-	real_t g = ((Uint8)(color >> mainsurface->format->Gshift)) / 255.f;
-	real_t b = ((Uint8)(color >> mainsurface->format->Bshift)) / 255.f;
-	real_t a = ((Uint8)(color >> mainsurface->format->Ashift)) / 255.f;
+	#ifdef __amigaos4__
+	real_t r = ((Uint8)(color >> 24)) / 255.f;
+	real_t g = ((Uint8)(color >> 16)) / 255.f;
+	real_t b = ((Uint8)(color >> 8)) / 255.f;
+	real_t a = ((Uint8)(color >> 0)) / 255.f;
+	#else
+	real_t r = ((Uint8)(color >> 0)) / 255.f;
+	real_t g = ((Uint8)(color >> 8)) / 255.f;
+	real_t b = ((Uint8)(color >> 16)) / 255.f;
+	real_t a = ((Uint8)(color >> 24)) / 255.f;
+	#endif
 	glColor4f(r, g, b, a);
 	glPushMatrix();
+	#if !defined(__amigaos4__) && !defined(__arm__)
+	int w = src->w;
+	int h = src->h;
+	#else
+	int w = src->w - 1.f;
+	int h = src->h - 1.f;
+	if(!w) w=1;
+	if(!h) h=1;
+	#endif
 	glBegin(GL_QUADS);
 	glTexCoord2f(1.0 * ((real_t)src->x / image->w), 1.0 * ((real_t)src->y / image->h));
 	glVertex2f(pos->x, yres - pos->y);
 	glTexCoord2f(1.0 * ((real_t)src->x / image->w), 1.0 * (((real_t)src->y + src->h) / image->h));
-	glVertex2f(pos->x, yres - pos->y - src->h);
+	glVertex2f(pos->x, yres - pos->y - h);
 	glTexCoord2f(1.0 * (((real_t)src->x + src->w) / image->w), 1.0 * (((real_t)src->y + src->h) / image->h));
-	glVertex2f(pos->x + src->w, yres - pos->y - src->h);
+	glVertex2f(pos->x + w, yres - pos->y - h);
 	glTexCoord2f(1.0 * (((real_t)src->x + src->w) / image->w), 1.0 * ((real_t)src->y / image->h));
-	glVertex2f(pos->x + src->w, yres - pos->y);
+	glVertex2f(pos->x + w, yres - pos->y);
 	glEnd();
 	glPopMatrix();
 	glEnable(GL_DEPTH_TEST);
@@ -548,16 +580,25 @@ void drawImageAlpha( SDL_Surface* image, SDL_Rect* src, SDL_Rect* pos, Uint8 alp
 	// draw a textured quad
 	glBindTexture(GL_TEXTURE_2D, texid[image->refcount]);
 	glColor4f(1, 1, 1, alpha / 255.1);
+	#ifdef WIN32
+	int w = src->w;
+	int h = src->h;
+	#else
+	int w = src->w - 1.f;
+	int h = src->h - 1.f;
+	if(!w) w=1;
+	if(!h) h=1;
+	#endif
 	glPushMatrix();
 	glBegin(GL_QUADS);
 	glTexCoord2f(1.0 * ((real_t)src->x / image->w), 1.0 * ((real_t)src->y / image->h));
 	glVertex2f(pos->x, yres - pos->y);
 	glTexCoord2f(1.0 * ((real_t)src->x / image->w), 1.0 * (((real_t)src->y + src->h) / image->h));
-	glVertex2f(pos->x, yres - pos->y - src->h);
+	glVertex2f(pos->x, yres - pos->y - h);
 	glTexCoord2f(1.0 * (((real_t)src->x + src->w) / image->w), 1.0 * (((real_t)src->y + src->h) / image->h));
-	glVertex2f(pos->x + src->w, yres - pos->y - src->h);
+	glVertex2f(pos->x + w, yres - pos->y - h);
 	glTexCoord2f(1.0 * (((real_t)src->x + src->w) / image->w), 1.0 * ((real_t)src->y / image->h));
-	glVertex2f(pos->x + src->w, yres - pos->y);
+	glVertex2f(pos->x + w, yres - pos->y);
 	glEnd();
 	glPopMatrix();
 	glEnable(GL_DEPTH_TEST);
@@ -598,16 +639,25 @@ void drawImage( SDL_Surface* image, SDL_Rect* src, SDL_Rect* pos )
 	// draw a textured quad
 	glBindTexture(GL_TEXTURE_2D, texid[image->refcount]);
 	glColor4f(1, 1, 1, 1);
+	#ifdef WIN32
+	int w = src->w;
+	int h = src->h;
+	#else
+	int w = src->w - 1.f;
+	int h = src->h - 1.f;
+	if(!w) w=1;
+	if(!h) h=1;
+	#endif
 	glPushMatrix();
 	glBegin(GL_QUADS);
 	glTexCoord2f(1.0 * ((real_t)src->x / image->w), 1.0 * ((real_t)src->y / image->h));
 	glVertex2f(pos->x, yres - pos->y);
 	glTexCoord2f(1.0 * ((real_t)src->x / image->w), 1.0 * (((real_t)src->y + src->h) / image->h));
-	glVertex2f(pos->x, yres - pos->y - src->h);
+	glVertex2f(pos->x, yres - pos->y - h);
 	glTexCoord2f(1.0 * (((real_t)src->x + src->w) / image->w), 1.0 * (((real_t)src->y + src->h) / image->h));
-	glVertex2f(pos->x + src->w, yres - pos->y - src->h);
+	glVertex2f(pos->x + w, yres - pos->y - h);
 	glTexCoord2f(1.0 * (((real_t)src->x + src->w) / image->w), 1.0 * ((real_t)src->y / image->h));
-	glVertex2f(pos->x + src->w, yres - pos->y);
+	glVertex2f(pos->x + w, yres - pos->y);
 	glEnd();
 	glPopMatrix();
 	glEnable(GL_DEPTH_TEST);
@@ -773,7 +823,15 @@ void drawImageScaled( SDL_Surface* image, SDL_Rect* src, SDL_Rect* pos )
 		secondsrc.h = image->h;
 		src = &secondsrc;
 	}
-
+	#if !defined(__amigaos4__) && !defined(__arm__)
+	int w = pos->w;
+	int h = pos->h;
+	#else
+	int w = pos->w - 1.f;
+	int h = pos->h - 1.f;
+	if(!w) w=1;
+	if(!h) h=1;
+	#endif
 	// draw a textured quad
 	glBindTexture(GL_TEXTURE_2D, texid[image->refcount]);
 	glColor4f(1, 1, 1, 1);
@@ -782,11 +840,11 @@ void drawImageScaled( SDL_Surface* image, SDL_Rect* src, SDL_Rect* pos )
 	glTexCoord2f(0.f, 0.f);
 	glVertex2f(pos->x, yres - pos->y);
 	glTexCoord2f(0.f, 1.f);
-	glVertex2f(pos->x, yres - pos->y - pos->h);
+	glVertex2f(pos->x, yres - pos->y - h);
 	glTexCoord2f(1.f, 1.f);
-	glVertex2f(pos->x + pos->w, yres - pos->y - pos->h);
+	glVertex2f(pos->x + w, yres - pos->y - h);
 	glTexCoord2f(1.f, 0.f);
-	glVertex2f(pos->x + pos->w, yres - pos->y);
+	glVertex2f(pos->x + w, yres - pos->y);
 	glEnd();
 	glPopMatrix();
 	glEnable(GL_DEPTH_TEST);
@@ -826,21 +884,37 @@ void drawImageScaledColor(SDL_Surface* image, SDL_Rect* src, SDL_Rect* pos, Uint
 
 	// draw a textured quad
 	glBindTexture(GL_TEXTURE_2D, texid[image->refcount]);
-	real_t r = ((Uint8)(color >> mainsurface->format->Rshift)) / 255.f;
-	real_t g = ((Uint8)(color >> mainsurface->format->Gshift)) / 255.f;
-	real_t b = ((Uint8)(color >> mainsurface->format->Bshift)) / 255.f;
-	real_t a = ((Uint8)(color >> mainsurface->format->Ashift)) / 255.f;
+	#ifdef __amigaos4__
+	real_t r = ((Uint8)(color >> 24)) / 255.f;
+	real_t g = ((Uint8)(color >> 16)) / 255.f;
+	real_t b = ((Uint8)(color >> 8)) / 255.f;
+	real_t a = ((Uint8)(color >> 0)) / 255.f;
+	#else
+	real_t r = ((Uint8)(color >> 0)) / 255.f;
+	real_t g = ((Uint8)(color >> 8)) / 255.f;
+	real_t b = ((Uint8)(color >> 16)) / 255.f;
+	real_t a = ((Uint8)(color >> 24)) / 255.f;
+	#endif
+	#if !defined(__amigaos4__) && !defined(__arm__)
+	int w = pos->w;
+	int h = pos->h;
+	#else
+	int w = pos->w - 1.f;
+	int h = pos->h - 1.f;
+	if(!w) w=1;
+	if(!h) h=1;
+	#endif
 	glColor4f(r, g, b, a);
 	glPushMatrix();
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.f, 0.f);
 	glVertex2f(pos->x, yres - pos->y);
 	glTexCoord2f(0.f, 1.f);
-	glVertex2f(pos->x, yres - pos->y - pos->h);
+	glVertex2f(pos->x, yres - pos->y - h);
 	glTexCoord2f(1.f, 1.f);
-	glVertex2f(pos->x + pos->w, yres - pos->y - pos->h);
+	glVertex2f(pos->x + w, yres - pos->y - h);
 	glTexCoord2f(1.f, 0.f);
-	glVertex2f(pos->x + pos->w, yres - pos->y);
+	glVertex2f(pos->x + w, yres - pos->y);
 	glEnd();
 	glPopMatrix();
 	glEnable(GL_DEPTH_TEST);
@@ -922,10 +996,17 @@ void drawImageFancy( SDL_Surface* image, Uint32 color, real_t angle, SDL_Rect* s
 
 	// draw a textured quad
 	glBindTexture(GL_TEXTURE_2D, texid[image->refcount]);
-	real_t r = ((Uint8)(color >> mainsurface->format->Rshift)) / 255.f;
-	real_t g = ((Uint8)(color >> mainsurface->format->Gshift)) / 255.f;
-	real_t b = ((Uint8)(color >> mainsurface->format->Bshift)) / 255.f;
-	real_t a = ((Uint8)(color >> mainsurface->format->Ashift)) / 255.f;
+	#ifdef __amigaos4__
+	real_t r = ((Uint8)(color >> 24)) / 255.f;
+	real_t g = ((Uint8)(color >> 16)) / 255.f;
+	real_t b = ((Uint8)(color >> 8)) / 255.f;
+	real_t a = ((Uint8)(color >> 0)) / 255.f;
+	#else
+	real_t r = ((Uint8)(color >> 0)) / 255.f;
+	real_t g = ((Uint8)(color >> 8)) / 255.f;
+	real_t b = ((Uint8)(color >> 16)) / 255.f;
+	real_t a = ((Uint8)(color >> 24)) / 255.f;
+	#endif
 	glColor4f(r, g, b, a);
 	glPushMatrix();
 	glBegin(GL_QUADS);
@@ -2113,31 +2194,6 @@ SDL_Rect ttfPrintTextColor( TTF_Font* font, int x, int y, Uint32 color, bool out
 			SDL_Color sdlColorBlack = { 0, 0, 0, 255 };
 			surf = TTF_RenderUTF8_Blended(font, newStr, sdlColorBlack);
 		}
-		else
-		{
-			int w, h;
-			TTF_SizeUTF8(font, newStr, &w, &h);
-			if ( font == ttf8 )
-			{
-				surf = SDL_CreateRGBSurface(0, w + 2, h + 2,
-				                            mainsurface->format->BitsPerPixel,
-				                            mainsurface->format->Rmask,
-				                            mainsurface->format->Gmask,
-				                            mainsurface->format->Bmask,
-				                            mainsurface->format->Amask
-				                           );
-			}
-			else
-			{
-				surf = SDL_CreateRGBSurface(0, w + 4, h + 4,
-				                            mainsurface->format->BitsPerPixel,
-				                            mainsurface->format->Rmask,
-				                            mainsurface->format->Gmask,
-				                            mainsurface->format->Bmask,
-				                            mainsurface->format->Amask
-				                           );
-			}
-		}
 
 		if (!surf)
 		{
@@ -2149,19 +2205,35 @@ SDL_Rect ttfPrintTextColor( TTF_Font* font, int x, int y, Uint32 color, bool out
 		SDL_Color sdlColorWhite = { 255, 255, 255, 255 };
 		SDL_Surface* textSurf = TTF_RenderUTF8_Blended(font, newStr, sdlColorWhite);
 
-		// combine the surfaces
-		if ( font == ttf8 )
-		{
-			pos.x = 1;
-			pos.y = 1;
+		if( outline ) {
+			// combine the surfaces
+			if ( font == ttf8 )
+			{
+				pos.x = 1;
+				pos.y = 1;
+			}
+			else
+			{
+				pos.x = 2;
+				pos.y = 2;
+			}
+			SDL_BlitSurface(textSurf, NULL, surf, &pos);
+			SDL_free(textSurf);
+			// load the text outline surface as a GL texture
+		} else {
+			surf = textSurf;
+			if(!surf) {// happens when text is empty
+				int w, h;
+				TTF_SizeUTF8(font, newStr, &w, &h);
+				surf = SDL_CreateRGBSurface(0, w+((font==ttf8)?2:4), h+((font==ttf8)?2:4), 32,
+				#ifdef __amigaos4__
+				0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff
+				#else
+				0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000
+				#endif
+				);
+			}
 		}
-		else
-		{
-			pos.x = 2;
-			pos.y = 2;
-		}
-		SDL_BlitSurface(textSurf, NULL, surf, &pos);
-		// load the text outline surface as a GL texture
 		allsurfaces[imgref] = surf;
 		allsurfaces[imgref]->refcount = imgref;
 		glLoadTexture(allsurfaces[imgref], imgref);
@@ -2174,15 +2246,20 @@ SDL_Rect ttfPrintTextColor( TTF_Font* font, int x, int y, Uint32 color, bool out
 	}
 
 	// draw the text surface
-	if ( font == ttf8 )
-	{
+	if( outline ) {
+		if ( font == ttf8 )
+		{
+			pos.x = x;
+			pos.y = y - 3;
+		}
+		else
+		{
+			pos.x = x + 1;
+			pos.y = y - 4;
+		}
+	} else {
 		pos.x = x;
-		pos.y = y - 3;
-	}
-	else
-	{
-		pos.x = x + 1;
-		pos.y = y - 4;
+		pos.y = y;
 	}
 	pos.w = surf->w;
 	pos.h = surf->h;
