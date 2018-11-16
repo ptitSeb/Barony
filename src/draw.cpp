@@ -522,24 +522,15 @@ void drawImageColor( SDL_Surface* image, SDL_Rect* src, SDL_Rect* pos, Uint32 co
 	#endif
 	glColor4f(r, g, b, a);
 	glPushMatrix();
-	#if !defined(__amigaos4__) && !defined(__arm__)
-	int w = src->w;
-	int h = src->h;
-	#else
-	int w = src->w - 1.f;
-	int h = src->h - 1.f;
-	if(!w) w=1;
-	if(!h) h=1;
-	#endif
 	glBegin(GL_QUADS);
 	glTexCoord2f(1.0 * ((real_t)src->x / image->w), 1.0 * ((real_t)src->y / image->h));
 	glVertex2f(pos->x, yres - pos->y);
 	glTexCoord2f(1.0 * ((real_t)src->x / image->w), 1.0 * (((real_t)src->y + src->h) / image->h));
-	glVertex2f(pos->x, yres - pos->y - h);
+	glVertex2f(pos->x, yres - pos->y - src->h);
 	glTexCoord2f(1.0 * (((real_t)src->x + src->w) / image->w), 1.0 * (((real_t)src->y + src->h) / image->h));
-	glVertex2f(pos->x + w, yres - pos->y - h);
+	glVertex2f(pos->x + src->w, yres - pos->y - src->h);
 	glTexCoord2f(1.0 * (((real_t)src->x + src->w) / image->w), 1.0 * ((real_t)src->y / image->h));
-	glVertex2f(pos->x + w, yres - pos->y);
+	glVertex2f(pos->x + src->w, yres - pos->y);
 	glEnd();
 	glPopMatrix();
 	glEnable(GL_DEPTH_TEST);
@@ -580,25 +571,16 @@ void drawImageAlpha( SDL_Surface* image, SDL_Rect* src, SDL_Rect* pos, Uint8 alp
 	// draw a textured quad
 	glBindTexture(GL_TEXTURE_2D, texid[image->refcount]);
 	glColor4f(1, 1, 1, alpha / 255.1);
-	#ifdef WIN32
-	int w = src->w;
-	int h = src->h;
-	#else
-	int w = src->w - 1.f;
-	int h = src->h - 1.f;
-	if(!w) w=1;
-	if(!h) h=1;
-	#endif
 	glPushMatrix();
 	glBegin(GL_QUADS);
 	glTexCoord2f(1.0 * ((real_t)src->x / image->w), 1.0 * ((real_t)src->y / image->h));
 	glVertex2f(pos->x, yres - pos->y);
 	glTexCoord2f(1.0 * ((real_t)src->x / image->w), 1.0 * (((real_t)src->y + src->h) / image->h));
-	glVertex2f(pos->x, yres - pos->y - h);
+	glVertex2f(pos->x, yres - pos->y - src->h);
 	glTexCoord2f(1.0 * (((real_t)src->x + src->w) / image->w), 1.0 * (((real_t)src->y + src->h) / image->h));
-	glVertex2f(pos->x + w, yres - pos->y - h);
+	glVertex2f(pos->x + src->w, yres - pos->y - src->h);
 	glTexCoord2f(1.0 * (((real_t)src->x + src->w) / image->w), 1.0 * ((real_t)src->y / image->h));
-	glVertex2f(pos->x + w, yres - pos->y);
+	glVertex2f(pos->x + src->w, yres - pos->y);
 	glEnd();
 	glPopMatrix();
 	glEnable(GL_DEPTH_TEST);
@@ -639,25 +621,16 @@ void drawImage( SDL_Surface* image, SDL_Rect* src, SDL_Rect* pos )
 	// draw a textured quad
 	glBindTexture(GL_TEXTURE_2D, texid[image->refcount]);
 	glColor4f(1, 1, 1, 1);
-	#ifdef WIN32
-	int w = src->w;
-	int h = src->h;
-	#else
-	int w = src->w - 1.f;
-	int h = src->h - 1.f;
-	if(!w) w=1;
-	if(!h) h=1;
-	#endif
 	glPushMatrix();
 	glBegin(GL_QUADS);
 	glTexCoord2f(1.0 * ((real_t)src->x / image->w), 1.0 * ((real_t)src->y / image->h));
 	glVertex2f(pos->x, yres - pos->y);
 	glTexCoord2f(1.0 * ((real_t)src->x / image->w), 1.0 * (((real_t)src->y + src->h) / image->h));
-	glVertex2f(pos->x, yres - pos->y - h);
+	glVertex2f(pos->x, yres - pos->y - src->h);
 	glTexCoord2f(1.0 * (((real_t)src->x + src->w) / image->w), 1.0 * (((real_t)src->y + src->h) / image->h));
-	glVertex2f(pos->x + w, yres - pos->y - h);
+	glVertex2f(pos->x + src->w, yres - pos->y - src->h);
 	glTexCoord2f(1.0 * (((real_t)src->x + src->w) / image->w), 1.0 * ((real_t)src->y / image->h));
-	glVertex2f(pos->x + w, yres - pos->y);
+	glVertex2f(pos->x + src->w, yres - pos->y);
 	glEnd();
 	glPopMatrix();
 	glEnable(GL_DEPTH_TEST);
@@ -823,15 +796,6 @@ void drawImageScaled( SDL_Surface* image, SDL_Rect* src, SDL_Rect* pos )
 		secondsrc.h = image->h;
 		src = &secondsrc;
 	}
-	#if !defined(__amigaos4__) && !defined(__arm__)
-	int w = pos->w;
-	int h = pos->h;
-	#else
-	int w = pos->w - 1.f;
-	int h = pos->h - 1.f;
-	if(!w) w=1;
-	if(!h) h=1;
-	#endif
 	// draw a textured quad
 	glBindTexture(GL_TEXTURE_2D, texid[image->refcount]);
 	glColor4f(1, 1, 1, 1);
@@ -840,11 +804,11 @@ void drawImageScaled( SDL_Surface* image, SDL_Rect* src, SDL_Rect* pos )
 	glTexCoord2f(0.f, 0.f);
 	glVertex2f(pos->x, yres - pos->y);
 	glTexCoord2f(0.f, 1.f);
-	glVertex2f(pos->x, yres - pos->y - h);
+	glVertex2f(pos->x, yres - pos->y - src->h);
 	glTexCoord2f(1.f, 1.f);
-	glVertex2f(pos->x + w, yres - pos->y - h);
+	glVertex2f(pos->x + src->w, yres - pos->y - src->h);
 	glTexCoord2f(1.f, 0.f);
-	glVertex2f(pos->x + w, yres - pos->y);
+	glVertex2f(pos->x + src->w, yres - pos->y);
 	glEnd();
 	glPopMatrix();
 	glEnable(GL_DEPTH_TEST);
@@ -895,26 +859,17 @@ void drawImageScaledColor(SDL_Surface* image, SDL_Rect* src, SDL_Rect* pos, Uint
 	real_t b = ((Uint8)(color >> 16)) / 255.f;
 	real_t a = ((Uint8)(color >> 24)) / 255.f;
 	#endif
-	#if !defined(__amigaos4__) && !defined(__arm__)
-	int w = pos->w;
-	int h = pos->h;
-	#else
-	int w = pos->w - 1.f;
-	int h = pos->h - 1.f;
-	if(!w) w=1;
-	if(!h) h=1;
-	#endif
 	glColor4f(r, g, b, a);
 	glPushMatrix();
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.f, 0.f);
 	glVertex2f(pos->x, yres - pos->y);
 	glTexCoord2f(0.f, 1.f);
-	glVertex2f(pos->x, yres - pos->y - h);
+	glVertex2f(pos->x, yres - pos->y - src->h);
 	glTexCoord2f(1.f, 1.f);
-	glVertex2f(pos->x + w, yres - pos->y - h);
+	glVertex2f(pos->x + src->w, yres - pos->y - src->h);
 	glTexCoord2f(1.f, 0.f);
-	glVertex2f(pos->x + w, yres - pos->y);
+	glVertex2f(pos->x + src->w, yres - pos->y);
 	glEnd();
 	glPopMatrix();
 	glEnable(GL_DEPTH_TEST);
