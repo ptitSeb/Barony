@@ -449,7 +449,7 @@ void drawStatus()
 					z = 0;
 				}
 			}
-			Uint32 color = SDL_MapRGBA(mainsurface->format, 0, 0, 0, 255); // black color
+			Uint32 color = 0xff000000; //(mainsurface->format, 0, 0, 0, 255); // black color
 			if ( uiscale_chatlog >= 1.5 )
 			{
 				ttfPrintTextColor(ttf16, x, y, color, false, string->data);
@@ -749,11 +749,11 @@ void drawStatus()
 		Uint32 color;
 		if ( current_hotbar == num && !openedChest[clientnum] )
 		{
-			color = SDL_MapRGBA(mainsurface->format, 255, 255, 0, 255); //Draw gold border around currently selected hotbar.
+			color = 0xff00ffff; //SDL_MapRGBA(mainsurface->format, 255, 255, 0, 255); //Draw gold border around currently selected hotbar.
 		}
 		else
 		{
-			color = SDL_MapRGBA(mainsurface->format, 255, 255, 255, 60); //Draw normal grey border.
+			color = 0x3cffffff; //SDL_MapRGBA(mainsurface->format, 255, 255, 255, 60); //Draw normal grey border.
 		}
 		pos.w = hotbar_img->w * uiscale_hotbar;
 		pos.h = hotbar_img->h * uiscale_hotbar;

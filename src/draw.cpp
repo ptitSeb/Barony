@@ -211,7 +211,11 @@ void drawArc( int x, int y, real_t radius, real_t angle1, real_t angle2, Uint32 
 	glLineWidth(2);
 
 	// draw line
+	#ifdef __amigaos4__
+	glColor4f(((Uint8)(color >> 24)) / 255.f, ((Uint8)(color >> 16)) / 255.f, ((Uint8)(color >> 8)) / 255.f, alpha / 255.f);
+	#else
 	glColor4f(((Uint8)(color >> 0)) / 255.f, ((Uint8)(color >> 8)) / 255.f, ((Uint8)(color >> 16)) / 255.f, alpha / 255.f);
+	#endif
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glEnable(GL_LINE_SMOOTH);
 	glBegin(GL_LINE_STRIP);
@@ -255,7 +259,11 @@ void drawArcInvertedY(int x, int y, real_t radius, real_t angle1, real_t angle2,
 	glLineWidth(2);
 
 	// draw line
+	#ifdef __amigaos4__
+	glColor4f(((Uint8)(color >> 24)) / 255.f, ((Uint8)(color >> 16)) / 255.f, ((Uint8)(color >> 8)) / 255.f, alpha / 255.f);
+	#else
 	glColor4f(((Uint8)(color >> 0)) / 255.f, ((Uint8)(color >> 8)) / 255.f, ((Uint8)(color >> 16)) / 255.f, alpha / 255.f);
+	#endif
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glEnable(GL_LINE_SMOOTH);
 	glBegin(GL_LINE_STRIP);
@@ -297,7 +305,11 @@ void drawLine( int x1, int y1, int x2, int y2, Uint32 color, Uint8 alpha )
 	glLineWidth(2);
 
 	// draw line
+	#ifdef __amigaos4__
+	glColor4f(((Uint8)(color >> 24)) / 255.f, ((Uint8)(color >> 16)) / 255.f, ((Uint8)(color >> 8)) / 255.f, alpha / 255.f);
+	#else
 	glColor4f(((Uint8)(color >> 0)) / 255.f, ((Uint8)(color >> 8)) / 255.f, ((Uint8)(color >> 16)) / 255.f, alpha / 255.f);
+	#endif
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glEnable(GL_LINE_SMOOTH);
 	glBegin(GL_LINES);
@@ -343,7 +355,11 @@ int drawRect( SDL_Rect* src, Uint32 color, Uint8 alpha )
 	}
 
 	// draw quad
+	#ifdef __amigaos4__
+	glColor4f(((Uint8)(color >> 24)) / 255.f, ((Uint8)(color >> 16)) / 255.f, ((Uint8)(color >> 8)) / 255.f, alpha / 255.f);
+	#else
 	glColor4f(((Uint8)(color >> 0)) / 255.f, ((Uint8)(color >> 8)) / 255.f, ((Uint8)(color >> 16)) / 255.f, alpha / 255.f);
+	#endif
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBegin(GL_QUADS);
 	glVertex2f(src->x, yres - src->y);
@@ -401,9 +417,9 @@ void drawGear(Sint16 x, Sint16 y, real_t size, Sint32 rotation)
 		y2 = ceil(size * sin((60 + c * 60 - 4 + rotation) * (PI / 180)) * 1.33) + y;
 		drawLine(x1, y1, x2, y2, color, 255);
 	}
-	color = SDL_MapRGBA(mainsurface->format, 191, 63, 0, 255);
+	color = 0xff003fbf; //SDL_MapRGBA(mainsurface->format, 191, 63, 0, 255);
 	drawCircle(x, y, size * .66, color, 255);
-	color = SDL_MapRGBA(mainsurface->format, 127, 0, 0, 255);
+	color = 0xff00007f; //SDL_MapRGBA(mainsurface->format, 127, 0, 0, 255);
 	drawCircle(x, y, size * .25, color, 255);
 }
 
@@ -493,10 +509,17 @@ void drawImageColor( SDL_Surface* image, SDL_Rect* src, SDL_Rect* pos, Uint32 co
 
 	// draw a textured quad
 	glBindTexture(GL_TEXTURE_2D, texid[image->refcount]);
+	#ifdef __amigaos4__
+	real_t r = ((Uint8)(color >> 24)) / 255.f;
+	real_t g = ((Uint8)(color >> 16)) / 255.f;
+	real_t b = ((Uint8)(color >> 8)) / 255.f;
+	real_t a = ((Uint8)(color >> 0)) / 255.f;
+	#else
 	real_t r = ((Uint8)(color >> 0)) / 255.f;
 	real_t g = ((Uint8)(color >> 8)) / 255.f;
 	real_t b = ((Uint8)(color >> 16)) / 255.f;
 	real_t a = ((Uint8)(color >> 24)) / 255.f;
+	#endif
 	glColor4f(r, g, b, a);
 	glPushMatrix();
 	glBegin(GL_QUADS);
@@ -825,10 +848,17 @@ void drawImageScaledColor(SDL_Surface* image, SDL_Rect* src, SDL_Rect* pos, Uint
 
 	// draw a textured quad
 	glBindTexture(GL_TEXTURE_2D, texid[image->refcount]);
+	#ifdef __amigaos4__
+	real_t r = ((Uint8)(color >> 24)) / 255.f;
+	real_t g = ((Uint8)(color >> 16)) / 255.f;
+	real_t b = ((Uint8)(color >> 8)) / 255.f;
+	real_t a = ((Uint8)(color >> 0)) / 255.f;
+	#else
 	real_t r = ((Uint8)(color >> 0)) / 255.f;
 	real_t g = ((Uint8)(color >> 8)) / 255.f;
 	real_t b = ((Uint8)(color >> 16)) / 255.f;
 	real_t a = ((Uint8)(color >> 24)) / 255.f;
+	#endif
 	glColor4f(r, g, b, a);
 	glPushMatrix();
 	glBegin(GL_QUADS);
@@ -921,10 +951,17 @@ void drawImageFancy( SDL_Surface* image, Uint32 color, real_t angle, SDL_Rect* s
 
 	// draw a textured quad
 	glBindTexture(GL_TEXTURE_2D, texid[image->refcount]);
+	#ifdef __amigaos4__
+	real_t r = ((Uint8)(color >> 24)) / 255.f;
+	real_t g = ((Uint8)(color >> 16)) / 255.f;
+	real_t b = ((Uint8)(color >> 8)) / 255.f;
+	real_t a = ((Uint8)(color >> 0)) / 255.f;
+	#else
 	real_t r = ((Uint8)(color >> 0)) / 255.f;
 	real_t g = ((Uint8)(color >> 8)) / 255.f;
 	real_t b = ((Uint8)(color >> 16)) / 255.f;
 	real_t a = ((Uint8)(color >> 24)) / 255.f;
+	#endif
 	glColor4f(r, g, b, a);
 	glPushMatrix();
 	glBegin(GL_QUADS);

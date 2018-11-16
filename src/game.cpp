@@ -2027,7 +2027,7 @@ void handleButtons(void)
 		{
 			//Draw golden border.
 			//For such things as which settings tab the controller has presently selected.
-			Uint32 color = SDL_MapRGBA(mainsurface->format, 255, 255, 0, 127);
+			Uint32 color = 0x7f00ffff;//SDL_MapRGBA(mainsurface->format, 255, 255, 0, 127);
 			SDL_Rect pos;
 			pos.x = button->x;
 			pos.w = button->sizex;
@@ -2939,7 +2939,7 @@ int main(int argc, char** argv)
 					char* banner_text1 = language[738];
 					char* banner_text2 = "\n\n\n\n\n\n\n - Turning Wheel";
 					ttfPrintText(ttf16, (xres / 2) - longestline(banner_text1)*TTF16_WIDTH / 2, yres / 2 - TTF16_HEIGHT / 2 * 7, banner_text1);
-					Uint32 colorBlue = SDL_MapRGBA(mainsurface->format, 0, 92, 255, 255);
+					Uint32 colorBlue = 0xffff5c00;//SDL_MapRGBA(mainsurface->format, 0, 92, 255, 255);
 					ttfPrintTextColor(ttf16, (xres / 2) - longestline(banner_text1)*TTF16_WIDTH / 2, yres / 2 - TTF16_HEIGHT / 2 * 7, colorBlue, true, banner_text2);
 
 					int time_passed = 0;
@@ -3470,7 +3470,7 @@ int main(int argc, char** argv)
 										char chatstring[256];
 										strcpy(chatstring, language[739]);
 										strcat(chatstring, command_str);
-										Uint32 color = SDL_MapRGBA(mainsurface->format, 0, 255, 255, 255);
+										Uint32 color = 0xffffff00; //SDL_MapRGBA(mainsurface->format, 0, 255, 255, 255);
 										messagePlayerColor(clientnum, color, chatstring);
 										playSound(238, 64);
 										if ( multiplayer == SERVER )
@@ -3517,7 +3517,7 @@ int main(int argc, char** argv)
 										char chatstring[256];
 										strcpy(chatstring, language[739]);
 										strcat(chatstring, command_str);
-										Uint32 color = SDL_MapRGBA(mainsurface->format, 0, 255, 255, 255);
+										Uint32 color = 0xffffff00; //SDL_MapRGBA(mainsurface->format, 0, 255, 255, 255);
 										messagePlayerColor(clientnum, color, chatstring);
 										playSound(238, 64);
 

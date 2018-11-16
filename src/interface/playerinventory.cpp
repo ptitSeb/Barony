@@ -683,7 +683,7 @@ void drawBlueInventoryBorder(const Item& item, int x, int y)
 	pos.w = INVENTORY_SLOTSIZE;
 	pos.h = INVENTORY_SLOTSIZE;
 
-	Uint32 color = SDL_MapRGBA(mainsurface->format, 0, 0, 255, 127);
+	Uint32 color = 0x7fff0000; //SDL_MapRGBA(mainsurface->format, 0, 0, 255, 127);
 	drawBox(&pos, color, 127);
 }
 
@@ -847,7 +847,7 @@ void updatePlayerInventory()
 
 				if ( x == selected_inventory_slot_x && y == selected_inventory_slot_y && !hotbarHasFocus )
 				{
-					Uint32 color = SDL_MapRGBA(mainsurface->format, 255, 255, 0, 127);
+					Uint32 color = 0x7f00ffff; //SDL_MapRGBA(mainsurface->format, 255, 255, 0, 127);
 					drawBox(&pos, color, 127);
 				}
 			}
