@@ -592,7 +592,11 @@ int fmod_result;
 	title_bmp = loadImage("images/system/title.png");
 	logo_bmp = loadImage("images/system/logo.png");
 	cursor_bmp = loadImage("images/system/cursor.png");
+	#ifdef PANDORA
+	cross_bmp = loadImage("cross.png");
+	#else
 	cross_bmp = loadImage("images/system/cross.png");
+	#endif
 
 	loadAllScores(SCORESFILE);
 	loadAllScores(SCORESFILE_MULTIPLAYER);

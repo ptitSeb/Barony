@@ -180,7 +180,11 @@ std::vector<std::pair<SDL_Surface**, std::string>> systemResourceImages =
 	std::make_pair(&title_bmp, "images/system/title.png"),
 	std::make_pair(&logo_bmp, "images/system/logo.png"),
 	std::make_pair(&cursor_bmp, "images/system/cursor.png"),
+	#ifdef PANDORA
+	std::make_pair(&cross_bmp, "cross.png"),
+	#else
 	std::make_pair(&cross_bmp, "images/system/cross.png"),
+	#endif
 
 	std::make_pair(&fancyWindow_bmp, "images/system/fancyWindow.png"),
 	std::make_pair(&font8x8_bmp, "images/system/font8x8.png"),
