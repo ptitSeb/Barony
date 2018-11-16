@@ -676,7 +676,7 @@ void drawImageRing(SDL_Surface* image, SDL_Rect* src, int radius, int thickness,
 	double s;
 	real_t arcAngle = angStart;
 	int first = segments / 2;
-#ifdef PANDORA
+#if defined(PANDORA) || defined(__amigaos4__)
 	real_t distance = round((angEnd - angStart) * segments / (2 * PI));
 #else
 	real_t distance = std::round((angEnd - angStart) * segments / (2 * PI));

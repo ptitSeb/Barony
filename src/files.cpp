@@ -511,7 +511,16 @@ bool completePath(char *dest, const char * const filename, const char *base) {
 	}
 #endif
 
+#ifdef __amigaos4__
+	// if start with "PROGDIR:" then it's already absolute folder
+	if ( strncmp(filename, "PROGDIR:" , 8)==0) {
+		strncpy(dest, filename, PATH_MAX);
+		return true;
+	}
+	snprintf(dest, PATH_MAX, "%s%s", base, filename);
+#else
 	snprintf(dest, PATH_MAX, "%s/%s", base, filename);
+#endif
 	return true;
 }
 
@@ -1696,7 +1705,11 @@ int physfsLoadMapFile(int levelToLoad, Uint32 seed, bool useRandSeed, int* check
 				// found a percentage for secret levels to spawn.
 				parameterStr = mapName.substr(darkmapChanceFound + strlen(" darkmap%: "));
 				parameterStr = parameterStr.substr(0, parameterStr.find_first_of(" \0"));
+#ifdef __amigaos4__
+				std::get<LEVELPARAM_CHANCE_DARKNESS>(mapParameters) = std::atoi(parameterStr.c_str());
+#else
 				std::get<LEVELPARAM_CHANCE_DARKNESS>(mapParameters) = std::stoi(parameterStr);
+#endif
 				if ( std::get<LEVELPARAM_CHANCE_DARKNESS>(mapParameters) < 0 || std::get<LEVELPARAM_CHANCE_DARKNESS>(mapParameters) > 100 )
 				{
 					std::get<LEVELPARAM_CHANCE_DARKNESS>(mapParameters) = -1;
@@ -1707,7 +1720,11 @@ int physfsLoadMapFile(int levelToLoad, Uint32 seed, bool useRandSeed, int* check
 				// found a percentage for secret levels to spawn.
 				parameterStr = mapName.substr(minotaurChanceFound + strlen(" minotaur%: "));
 				parameterStr = parameterStr.substr(0, parameterStr.find_first_of(" \0"));
+#ifdef __amigaos4__
+				std::get<LEVELPARAM_CHANCE_MINOTAUR>(mapParameters) = std::atoi(parameterStr.c_str());
+#else
 				std::get<LEVELPARAM_CHANCE_MINOTAUR>(mapParameters) = std::stoi(parameterStr);
+#endif
 				if ( std::get<LEVELPARAM_CHANCE_MINOTAUR>(mapParameters) < 0 || std::get<LEVELPARAM_CHANCE_MINOTAUR>(mapParameters) > 100 )
 				{
 					std::get<LEVELPARAM_CHANCE_MINOTAUR>(mapParameters) = -1;

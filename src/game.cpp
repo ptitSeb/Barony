@@ -38,7 +38,7 @@
 #include "player.hpp"
 #include <limits>
 
-#ifdef LINUX
+#if defined(LINUX) && !defined(__amigaos4__)
 //Sigsegv catching stuff.
 #include <signal.h>
 #include <string.h>
@@ -2606,7 +2606,7 @@ bool frameRateLimit( Uint32 maxFrameRate, bool resetAccumulator)
 int main(int argc, char** argv)
 {
 
-#ifdef LINUX
+#if defined(LINUX) && !defined(__amigaos4__)
 	//Catch segfault stuff.
 	struct sigaction sa;
 
