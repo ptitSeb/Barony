@@ -2111,6 +2111,31 @@ SDL_Rect ttfPrintTextColor( TTF_Font* font, int x, int y, Uint32 color, bool out
 			SDL_Color sdlColorBlack = { 0, 0, 0, 255 };
 			surf = TTF_RenderUTF8_Blended(font, newStr, sdlColorBlack);
 		}
+		else
+		{
+			int w, h;
+			TTF_SizeUTF8(font, newStr, &w, &h);
+			if ( font == ttf8 )
+			{
+				surf = SDL_CreateRGBSurface(0, w + 2, h + 2,
+				                            mainsurface->format->BitsPerPixel,
+				                            mainsurface->format->Rmask,
+				                            mainsurface->format->Gmask,
+				                            mainsurface->format->Bmask,
+				                            mainsurface->format->Amask
+				                           );
+			}
+			else
+			{
+				surf = SDL_CreateRGBSurface(0, w + 4, h + 4,
+				                            mainsurface->format->BitsPerPixel,
+				                            mainsurface->format->Rmask,
+				                            mainsurface->format->Gmask,
+				                            mainsurface->format->Bmask,
+				                            mainsurface->format->Amask
+				                           );
+			}
+		}
 
 		if (!surf)
 		{
@@ -2122,35 +2147,20 @@ SDL_Rect ttfPrintTextColor( TTF_Font* font, int x, int y, Uint32 color, bool out
 		SDL_Color sdlColorWhite = { 255, 255, 255, 255 };
 		SDL_Surface* textSurf = TTF_RenderUTF8_Blended(font, newStr, sdlColorWhite);
 
-		if( outline ) {
 			// combine the surfaces
-			if ( font == ttf8 )
-			{
-				pos.x = 1;
-				pos.y = 1;
-			}
-			else
-			{
-				pos.x = 2;
-				pos.y = 2;
-			}
-			SDL_BlitSurface(textSurf, NULL, surf, &pos);
-			SDL_free(textSurf);
-			// load the text outline surface as a GL texture
-		} else {
-			surf = textSurf;
-			if(!surf) {// happens when text is empty
-				int w, h;
-				TTF_SizeUTF8(font, newStr, &w, &h);
-				surf = SDL_CreateRGBSurface(0, w+((font==ttf8)?2:4), h+((font==ttf8)?2:4), 32,
-				#ifdef __amigaos4__
-				0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff
-				#else
-				0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000
-				#endif
-				);
-			}
+		if ( font == ttf8 )
+		{
+			pos.x = 1;
+			pos.y = 1;
 		}
+		else
+		{
+			pos.x = 2;
+			pos.y = 2;
+		}
+		SDL_BlitSurface(textSurf, NULL, surf, &pos);
+		SDL_free(textSurf);
+		// load the text outline surface as a GL texture
 		allsurfaces[imgref] = surf;
 		allsurfaces[imgref]->refcount = imgref;
 		glLoadTexture(allsurfaces[imgref], imgref);
@@ -2163,20 +2173,15 @@ SDL_Rect ttfPrintTextColor( TTF_Font* font, int x, int y, Uint32 color, bool out
 	}
 
 	// draw the text surface
-	if( outline ) {
-		if ( font == ttf8 )
-		{
-			pos.x = x;
-			pos.y = y - 3;
-		}
-		else
-		{
-			pos.x = x + 1;
-			pos.y = y - 4;
-		}
-	} else {
+	if ( font == ttf8 )
+	{
 		pos.x = x;
-		pos.y = y;
+		pos.y = y - 3;
+	}
+	else
+	{
+		pos.x = x + 1;
+		pos.y = y - 4;
 	}
 	pos.w = surf->w;
 	pos.h = surf->h;
