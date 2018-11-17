@@ -513,10 +513,10 @@ bool completePath(char *dest, const char * const filename, const char *base) {
 
 #ifdef __amigaos4__
 	// if start with "PROGDIR:" then it's already absolute folder
-	if ( strncmp(filename, "PROGDIR:" , 8)==0) {
+	/*if ( strncmp(filename, "PROGDIR:" , 8)==0) {
 		strncpy(dest, filename, PATH_MAX);
 		return true;
-	}
+	}*/
 	snprintf(dest, PATH_MAX, "%s%s", base, filename);
 #else
 	snprintf(dest, PATH_MAX, "%s/%s", base, filename);
