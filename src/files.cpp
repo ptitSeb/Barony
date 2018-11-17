@@ -589,15 +589,24 @@ SDL_Surface* loadImage(char* filename)
 	// translate the original surface to an RGBA surface
 	//int w = pow(2, ceil( log(std::max(originalSurface->w,originalSurface->h))/log(2) ) ); // round up to the nearest power of two
 	if(originalSurface->format->BitsPerPixel>=24 && 
+		#ifdef __amigaos4__
+		0
+		#else
 		originalSurface->format->Rmask==0x000000ff && 
 		originalSurface->format->Gmask==0x0000ff00 &&
-		originalSurface->format->Bmask==0x00ff0000) 
+		originalSurface->format->Bmask==0x00ff0000
+		#endif
+		) 
 	{
 		allsurfaces[imgref] = originalSurface;
 		allsurfaces[imgref]->refcount = imgref/* + 1*/;
 		glLoadTexture(allsurfaces[imgref], imgref);
 	} else {
+		#ifdef __amigaos4__
+		SDL_Surface* newSurface = SDL_CreateRGBSurface(0, originalSurface->w, originalSurface->h, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
+		#else
 		SDL_Surface* newSurface = SDL_CreateRGBSurface(0, originalSurface->w, originalSurface->h, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
+		#endif
 		SDL_BlitSurface(originalSurface, NULL, newSurface, NULL); // blit onto a purely RGBA Surface
 		// load the new surface as a GL texture
 		allsurfaces[imgref] = newSurface;
