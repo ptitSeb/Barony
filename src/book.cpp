@@ -276,7 +276,7 @@ void createBook(book_t* book)
 	book->pages.first = NULL;
 	book->pages.last = NULL;
 
-	Uint32 color = 0xff000000; //SDL_MapRGBA(mainsurface->format, 0, 0, 0, 255);
+	Uint32 color = SDL_MapRGBA(mainsurface->format, 0, 0, 0, 255);
 	string_t* string = newString(&book->pages, color, NULL);
 	string->data = (char*) malloc(sizeof(char) * (max_characters + 1));
 	memset(string->data, 0, sizeof(char) * (max_characters + 1));

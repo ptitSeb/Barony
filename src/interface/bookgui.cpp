@@ -134,7 +134,7 @@ void updateBookGUI()
 	}
 
 	// render the book's text
-	Uint32 color = 0xff000000; //SDL_MapRGBA(mainsurface->format, 0, 0, 0, 255);
+	Uint32 color = SDL_MapRGBA(mainsurface->format, 0, 0, 0, 255);
 	string_t* pagetext = (string_t*)book_page->element;
 	ttfPrintTextColor(BOOK_FONT, BOOK_GUI_X + 44, BOOK_GUI_Y + 20, color, false, pagetext->data );
 	if ( book_page->next != NULL )

@@ -524,12 +524,12 @@ void handleMainMenu(bool mode)
 		}
 		if ( mode && subtitleVisible )
 		{
-			Uint32 colorYellow = 0xff0ffff; //SDL_MapRGBA(mainsurface->format, 255, 255, 0, 255);
+			Uint32 colorYellow = SDL_MapRGBA(mainsurface->format, 255, 255, 0, 255);
 			ttfPrintTextColor(ttf16, 176, 20 + title_bmp->h - 24, colorYellow, true, language[1910 + subtitleCurrent]);
 		}
 
 		// gray text color
-		Uint32 colorGray = 0xff808080; //SDL_MapRGBA(mainsurface->format, 128, 128, 128, 255);
+		Uint32 colorGray = SDL_MapRGBA(mainsurface->format, 128, 128, 128, 255);
 
 		// print game version
 		if ( mode || introstage != 5 )
@@ -8455,7 +8455,7 @@ void handleMainMenu(bool mode)
 		}
 
 		// stages
-		Uint32 colorBlue = 0xffff5c00; //SDL_MapRGBA(mainsurface->format, 0, 92, 255, 255);
+		Uint32 colorBlue = SDL_MapRGBA(mainsurface->format, 0, 92, 255, 255);
 		if ( creditstage == 1 )
 		{
 			ttfPrintTextFormattedColor(ttf16, xres / 2 - (TTF16_WIDTH / 2)*strlen(language[56]), yres / 2 - 9 - 18, colorBlue, language[56]);
@@ -13091,7 +13091,7 @@ void gamemodsDrawWorkshopItemTagToggle(std::string tagname, int x, int y)
 	}
 	if ( mouseInBounds(x, x + printText.size() * TTF12_WIDTH, y, y + TTF12_HEIGHT) )
 	{
-		ttfPrintTextColor(ttf12, x, y, 0xff808080/*SDL_MapRGBA(mainsurface->format, 128, 128, 128, 255)*/, true, printText.c_str());
+		ttfPrintTextColor(ttf12, x, y, SDL_MapRGBA(mainsurface->format, 128, 128, 128, 255), true, printText.c_str());
 		if ( mousestatus[SDL_BUTTON_LEFT] )
 		{
 			playSound(139, 64);
