@@ -738,7 +738,7 @@ real_t getLightAt(int x, int y)
 
 -------------------------------------------------------------------------------*/
 
-#ifdef PANDORA
+#if defined(PANDORA) || defined(__amigaos4__)
 typedef struct {
 	GLfloat *colors;
 	GLfloat *texcoords;
@@ -939,7 +939,7 @@ void glDrawWorld(view_t* camera, int mode)
 	// glBegin / glEnd are also moved outside, 
 	// but needs to track the texture used to "flush" current drawing before switching
 	GLuint cur_tex = 0, new_tex = 0;
-#ifdef PANDORA
+#if defined(PANDORA) || defined(__amigaos4__)
 	buff_enter();
 	#define glVertex3f(x, y, z) buff_vertex3f(x, y, z)
 	#define glTexCoord2f(u, v)  buff_texcoord2f(u, v)
@@ -1410,7 +1410,7 @@ void glDrawWorld(view_t* camera, int mode)
 			}
 		}
 	}
-#ifdef PANDORA
+#if defined(PANDORA) || defined(__amigaos4__)
 	buff_leave();
 	#undef glBegin
 	#undef glEnd
