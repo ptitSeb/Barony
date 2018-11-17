@@ -162,7 +162,7 @@ void glDrawVoxel(view_t* camera, Entity* entity, int mode)
 			s = getLightForEntity(camera->x, camera->y);
 		}
 	}
-	// Moved glBeign / glEnd outside the loops, to limit the number of calls (helps gl4es on Pandora)
+	// Moved glBegin / glEnd outside the loops, to limit the number of calls (helps gl4es on Pandora)
 	if ( wholevoxels )
 	{
 		glBegin( GL_QUADS );
@@ -738,6 +738,93 @@ real_t getLightAt(int x, int y)
 
 -------------------------------------------------------------------------------*/
 
+#ifdef PANDORA
+typedef struct {
+	GLfloat *colors;
+	GLfloat *texcoords;
+	GLfloat *vertex;
+	int cap;
+	int size;
+	GLuint texture;
+} Buffer_t;
+
+#define MAXBUFF 32
+Buffer_t buffers[MAXBUFF] = {0};
+int curbuf = 0;
+int maxbuf = -1;
+GLfloat cur_col[4] = {0};
+GLfloat cur_tc[2] = {0};
+
+void buff_color3f(float r, float g, float b) {
+	cur_col[0] = r; cur_col[1] = g; cur_col[2] = b; cur_col[3] = 1.0f;
+}
+void buff_color4ub(GLubyte r, GLubyte g, GLubyte b, GLubyte a) {
+	const float f = 1.0f/255.0f;
+	cur_col[0] = r*f; cur_col[1] = g*f; cur_col[2] = b*f; cur_col[3] = a*f;
+}
+void buff_texcoord2f(float u, float v) {
+	cur_tc[0] = u; cur_tc[1] = v;
+}
+void buff_vertex3f(float x, float y, float z) {
+	Buffer_t *t = &buffers[curbuf];
+	if (t->size == t->cap) {
+		t->cap += 32;
+		t->colors = (GLfloat*)realloc(t->colors, t->cap*4*sizeof(GLfloat));
+		t->texcoords = (GLfloat*)realloc(t->texcoords, t->cap*2*sizeof(GLfloat));
+		t->vertex = (GLfloat*)realloc(t->vertex, t->cap*3*sizeof(GLfloat));
+	}
+	memcpy(t->colors+t->size*4, cur_col, 4*sizeof(GLfloat));
+	memcpy(t->texcoords+t->size*2, cur_tc, 2*sizeof(GLfloat));
+	t->vertex[t->size*3+0] = x; t->vertex[t->size*3+1] = y; t->vertex[t->size*3+2] = z;
+	t->size++;
+}
+void buff_enter() {
+	curbuf = 0;
+	maxbuf = 1;
+	if ( !disablevbos ) {
+		SDL_glBindVertexArray(0);
+		SDL_glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+	glEnableClientState( GL_VERTEX_ARRAY );
+	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+	glEnableClientState( GL_COLOR_ARRAY );
+}
+void buff_flush() {
+	for (int i=0; i<maxbuf; i++) {
+		Buffer_t *t = &buffers[i];
+		if (t->size) {
+			glBindTexture(GL_TEXTURE_2D, t->texture);
+			glTexCoordPointer(2, GL_FLOAT, 0, t->texcoords);
+			glColorPointer(4, GL_FLOAT, 0, t->colors);
+			glVertexPointer(3, GL_FLOAT, 0, t->vertex);
+			glDrawArrays(GL_QUADS, 0, t->size);
+			t->size = 0;
+		}
+		t->texture = 0;
+	}
+	maxbuf = 0;
+}
+void buff_leave() {
+	buff_flush();
+	glDisableClientState( GL_VERTEX_ARRAY );
+	glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+	glDisableClientState( GL_COLOR_ARRAY );
+}
+void buff_texture(GLuint new_tex) {
+	for (int i=0; i<maxbuf; i++) {
+		if (buffers[i].texture == new_tex) {
+			curbuf = i;
+			return;
+		}
+	}
+	if (maxbuf==MAXBUFF)
+		buff_flush();
+	curbuf = maxbuf++;
+	buffers[curbuf].texture = new_tex;
+}
+
+#endif
+
 void glDrawWorld(view_t* camera, int mode)
 {
 	int x, y, z;
@@ -770,7 +857,6 @@ void glDrawWorld(view_t* camera, int mode)
 	{
 		mapceilingtile = map.flags[MAP_FLAG_CEILINGTILE];
 	}
-
 	if ( clouds && mode == REALCOLORS )
 	{
 		// draw sky "box"
@@ -853,8 +939,19 @@ void glDrawWorld(view_t* camera, int mode)
 	// glBegin / glEnd are also moved outside, 
 	// but needs to track the texture used to "flush" current drawing before switching
 	GLuint cur_tex = 0, new_tex = 0;
+#ifdef PANDORA
+	buff_enter();
+	#define glVertex3f(x, y, z) buff_vertex3f(x, y, z)
+	#define glTexCoord2f(u, v)  buff_texcoord2f(u, v)
+	#define glColor3f(r, g, b)  buff_color3f(r, g, b)
+	#define glColor4ub(r, g, b, a)  buff_color4ub(r, g, b, a)
+	#define glBindTexture(a, t) buff_texture(t)
+	#define glBegin(a)
+	#define glEnd()
+#else
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBegin(GL_QUADS);
+#endif
 	for ( x = 0; x < map.width; x++ )
 	{
 		for ( y = 0; y < map.height; y++ )
@@ -1313,7 +1410,18 @@ void glDrawWorld(view_t* camera, int mode)
 			}
 		}
 	}
+#ifdef PANDORA
+	buff_leave();
+	#undef glBegin
+	#undef glEnd
+	#undef glVertex3f
+	#undef glColor3f
+	#undef glColor4ub
+	#undef glTexCoord2f
+	#undef glBindTexture
+#else
 	glEnd();
+#endif
 }
 
 /*GLuint create_shader(const char* filename, GLenum type)
