@@ -2160,6 +2160,14 @@ SDL_Rect ttfPrintTextColor( TTF_Font* font, int x, int y, Uint32 color, bool out
 		}
 		SDL_BlitSurface(textSurf, NULL, surf, &pos);
 		SDL_free(textSurf);
+#ifdef __amigaos4__
+		{
+			SDL_Surface* newSurface = SDL_CreateRGBSurface(0, surf->w, surf->h, 32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
+			SDL_BlitSurface(surf, NULL, newSurface, NULL);
+			SDL_free(surf);
+			surf = newSurface;
+		}
+#endif
 		// load the text outline surface as a GL texture
 		allsurfaces[imgref] = surf;
 		allsurfaces[imgref]->refcount = imgref;
