@@ -320,11 +320,7 @@ static int openal_oggrelease(OPENAL_SOUND *self) {
 }
 
 static int openal_streamread(OPENAL_SOUND *self, ALuint buffer) {
-	#ifdef __amigaos4__
-	#define OGGSIZE 16384
-	#else
 	#define OGGSIZE 65536
-	#endif
 	char pcm[OGGSIZE];
 	int size = 0;
 	int section;

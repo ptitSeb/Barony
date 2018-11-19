@@ -58,6 +58,10 @@ GLuint fbo_ren = 0;
 FILE* logfile = nullptr;
 bool steam_init = false;
 
+#ifdef __amigaos4__
+static const char* __attribute__((used)) stackcookie = "$STACK: 100000";
+#endif
+
 int initApp(char* title, int fullscreen)
 {
 	char name[128];
