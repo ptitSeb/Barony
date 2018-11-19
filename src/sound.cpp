@@ -539,7 +539,7 @@ int initOPENAL()
 
 int closeOPENAL()
 {
-	if(OpenALSoundON) return 0;
+	if(!OpenALSoundON) return 0;
 
 	OpenALSoundON = false;
 	int i = 0;
