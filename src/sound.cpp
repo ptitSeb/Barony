@@ -320,7 +320,11 @@ static int openal_oggrelease(OPENAL_SOUND *self) {
 }
 
 static int openal_streamread(OPENAL_SOUND *self, ALuint buffer) {
+	#ifdef __amigaos4__
+	#define OGGSIZE 16384
+	#else
 	#define OGGSIZE 65536
+	#endif
 	char pcm[OGGSIZE];
 	int size = 0;
 	int section;
@@ -331,7 +335,13 @@ static int openal_streamread(OPENAL_SOUND *self, ALuint buffer) {
 		#ifdef USE_TREMOR
 		result = ov_read(&self->oggStream, pcm+size, OGGSIZE -size, &section);
 		#else
-		result = ov_read(&self->oggStream, pcm+size, OGGSIZE -size, 0, 2, 1, &section);
+		result = ov_read(&self->oggStream, pcm+size, OGGSIZE -size, 
+		#ifdef __amigaos4__
+			1, 
+		#else
+			0, 
+		#endif
+			2, 1, &section);
 		#endif
 		if(result==0 && self->loop)
 			ov_raw_seek(&self->oggStream, 0);
