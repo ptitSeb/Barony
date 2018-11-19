@@ -442,15 +442,26 @@ void OPENAL_RemoveChannelGroup(OPENAL_SOUND *channel, OPENAL_CHANNELGROUP *group
 
 static void private_OPENAL_Channel_Stop(OPENAL_SOUND* channel) {
 	// stop and delete Sound (channel)
+	int queued;
 	channel->stream_active = false;
 	alSourceStop(channel->id);
 	if(channel->group)
 		OPENAL_RemoveChannelGroup(channel, channel->group);
 	if(channel->buffer->stream)
 		openal_oggrelease(channel);
-	alDeleteSources( 1, &channel->id );
+	else {
+		int queued;
+		alGetSourcei(channel->id, AL_BUFFERS_QUEUED, &queued);
+		while(queued--) {
+			ALuint buffer;
+			alSourceUnqueueBuffers(channel->id, 1, &buffer);
+		}
+	}
 	//free(channel);
+	channel->buffer = NULL;
+	channel->stream_active = false;
 	channel->active = false;
+	channel->group = NULL;
 }
 
 
@@ -508,10 +519,8 @@ int initOPENAL()
 	alDopplerFactor(2.0f);
 
 	// creates channels groups
-	sound_group = (OPENAL_CHANNELGROUP*)malloc(sizeof(OPENAL_CHANNELGROUP));
-	music_group = (OPENAL_CHANNELGROUP*)malloc(sizeof(OPENAL_CHANNELGROUP));
-	memset(sound_group, 0, sizeof(OPENAL_CHANNELGROUP));
-	memset(music_group, 0, sizeof(OPENAL_CHANNELGROUP));
+	sound_group = (OPENAL_CHANNELGROUP*)calloc(1, sizeof(OPENAL_CHANNELGROUP));
+	music_group = (OPENAL_CHANNELGROUP*)calloc(1, sizeof(OPENAL_CHANNELGROUP));
 	sound_group->volume = 1.0f;
 	music_group->volume = 1.0f;
 
@@ -546,7 +555,7 @@ int closeOPENAL()
 
 	// stop all remaining sound
 	for (int i=0; i<upper_unfreechannel; i++) {
-		if(openal_sounds[i].active && !openal_sounds[i].buffer->stream) {
+		if(openal_sounds[i].active /*&& !openal_sounds[i].buffer->stream*/) {
 			private_OPENAL_Channel_Stop(&openal_sounds[i]);
 		}
 	}
@@ -722,7 +731,7 @@ void OPENAL_RemoveChannelGroup(OPENAL_SOUND *channel, OPENAL_CHANNELGROUP *group
 }
 
 int OPENAL_CreateSound(const char* name, bool b3D, OPENAL_BUFFER **buffer) {
-	*buffer = (OPENAL_BUFFER*)malloc(sizeof(OPENAL_BUFFER));
+	*buffer = (OPENAL_BUFFER*)calloc(1, sizeof(OPENAL_BUFFER));
 	strcpy((*buffer)->oggfile, name);	// for debugging purpose
 	(*buffer)->stream = false;
 	FILE *f = openDataFile(name, "rb");
@@ -785,7 +794,7 @@ int OPENAL_CreateSound(const char* name, bool b3D, OPENAL_BUFFER **buffer) {
 }
 
 int OPENAL_CreateStreamSound(const char* name, OPENAL_BUFFER **buffer) {
-	*buffer = (OPENAL_BUFFER*)malloc(sizeof(OPENAL_BUFFER));
+	*buffer = (OPENAL_BUFFER*)calloc(1, sizeof(OPENAL_BUFFER));
 	(*buffer)->stream = true;
 	strcpy((*buffer)->oggfile, name);
 	return 1;
