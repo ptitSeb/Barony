@@ -752,7 +752,13 @@ int OPENAL_CreateSound(const char* name, bool b3D, OPENAL_BUFFER **buffer) {
 		#ifdef USE_TREMOR
 		bytes = ov_read(&oggFile, ptr, size, &bitStream);
 		#else
-		bytes = ov_read(&oggFile, ptr, size, 0, 2, 1, &bitStream);
+		bytes = ov_read(&oggFile, ptr, size, 
+		#ifdef __amigaos4__
+			1, 
+		#else
+			0, 
+		#endif
+			2, 1, &bitStream);
 		#endif
 		size-=bytes;
 		ptr+=bytes;
