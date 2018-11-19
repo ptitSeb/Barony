@@ -2657,6 +2657,8 @@ int main(int argc, char** argv)
 		FILE* fp;
 		//SDL_Surface *sky_bmp;
 		light_t* light;
+		int commandline_windowed = 0;
+		int commandline_xres = 0, commandline_yres = 0;
 
 		size_t datadirsz = std::min(sizeof(datadir) - 1, strlen(BASE_DATA_DIR));
 		strncpy(datadir, BASE_DATA_DIR, datadirsz);
@@ -2682,13 +2684,14 @@ int main(int argc, char** argv)
 				{
 					if ( !strcmp(argv[c], "-windowed") )
 					{
-						fullscreen = 0;
+						//fullscreen = 0;
+						commandline_windowed = 1;
 					}
 					else if ( !strncmp(argv[c], "-size=", 6) )
 					{
 						strncpy(tempstr, argv[c] + 6, strcspn(argv[c] + 6, "x"));
-						xres = std::max(320, atoi(tempstr));
-						yres = std::max(200, atoi(argv[c] + 6 + strcspn(argv[c] + 6, "x") + 1));
+						commandline_xres = std::max(320, atoi(tempstr));
+						commandline_yres = std::max(200, atoi(argv[c] + 6 + strcspn(argv[c] + 6, "x") + 1));
 					}
 					else if ( !strncmp(argv[c], "-map=", 5) )
 					{
@@ -2716,6 +2719,10 @@ int main(int argc, char** argv)
 						strncpy(datadir, argv[c] + 9, datadirsz);
 						datadir[datadirsz] = '\0';
 					}
+					else if ( !strcmp(argv[c], "-cache") )
+					{
+						useModelCache = 1;
+					}
 				}
 			}
 		}
@@ -2740,6 +2747,13 @@ int main(int argc, char** argv)
 		{
 			loadDefaultConfig();
 		}
+
+		if(commandline_windowed)
+			fullscreen = 0;
+		if(commandline_xres)
+			xres = commandline_xres;
+		if(commandline_yres)
+			yres = commandline_yres;
 
 		// initialize engine
 		if ( (c = initApp("Barony", fullscreen)) )
