@@ -1586,7 +1586,9 @@ std::vector<std::string> getLinesFromDataFile(std::string filename)
 {
 	std::vector<std::string> lines;
 	std::string filepath(datadir);
+#ifndef __amigaos4__
 	filepath += "/";
+#endif
 	filepath += filename;
 	std::ifstream file(filepath);
 	if ( !file )
