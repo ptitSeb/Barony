@@ -457,6 +457,7 @@ static void private_OPENAL_Channel_Stop(OPENAL_SOUND* channel) {
 			alSourceUnqueueBuffers(channel->id, 1, &buffer);
 		}
 	}
+	alDeleteSources(1, &channel->id);
 	//free(channel);
 	channel->buffer = NULL;
 	channel->stream_active = false;
