@@ -28,10 +28,14 @@ if(FMOD_ENABLED AND OPENAL_ENABLED)
   set(FMOD_ENABLED OFF)
 endif()
 
+set(USE_FLOAT 0)
+
 set(PANDORA 0)
 option(PANDORA_ENABLED "Build for the OpenPandora" OFF)
 if(PANDORA_ENABLED)
   set(PANDORA 1)
+  set(USE_FLOAT 1)
+  set(FLOAT_ENABLED ON)
 endif()
 
 if(USE_CCACHE)
@@ -41,6 +45,12 @@ if(USE_CCACHE)
         set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
     endif()
 endif()
+
+option(FLOAT_ENABLED "Use Float instead of Double" ${FLOAT_ENABLED})
+if(FLOAT_ENABLED)
+  set(USE_FLOAT 1)
+endif()
+
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
@@ -133,6 +143,15 @@ set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} -fdiagnostics-
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fdiagnostics-color=always")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fdiagnostics-color=always")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -fdiagnostics-color=always")
+endif()
+
+if(USE_FLOAT)
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fsingle-precision-constant")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -fsingle-precision-constant")
+set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} -fsingle-precision-constant")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsingle-precision-constant")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fsingle-precision-constant")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -fsingle-precision-constant")
 endif()
 
 if (APPLE)

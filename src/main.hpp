@@ -11,9 +11,8 @@
 
 #pragma once
 
-#ifdef __arm__
+#ifdef USE_FLOAT
 typedef float real_t;
-#define USE_FLOAT
 #else
 typedef double real_t;
 #endif
