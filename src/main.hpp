@@ -11,12 +11,6 @@
 
 #pragma once
 
-#ifdef USE_FLOAT
-typedef float real_t;
-#else
-typedef double real_t;
-#endif
-
 #include <algorithm> //For min and max, because the #define breaks everything in c++.
 #include <iostream>
 #include <list>
@@ -26,6 +20,13 @@ using std::string; //Instead of including an entire namespace, please explicitly
 #include <unordered_map>
 #include <unordered_set>
 #include "Config.hpp"
+
+#ifdef USE_FLOAT
+typedef float real_t;
+#else
+typedef double real_t;
+#endif
+
 #include "physfs.h"
 
 #ifdef STEAMWORKS
