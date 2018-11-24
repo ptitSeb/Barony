@@ -764,6 +764,10 @@ void defaultConfig()
 	consoleCommand("/bind 80 IN_LEFT");
 	consoleCommand("/bind 81 IN_BACK");
 	consoleCommand("/bind 79 IN_RIGHT");
+	consoleCommand("/bind 4 IN_TURNL");
+	consoleCommand("/bind 7 IN_TURNR");
+	consoleCommand("/bind 26 IN_UP");
+	consoleCommand("/bind 22 IN_DOWN");
 #else
 	consoleCommand("/mousespeed 16");
 	consoleCommand("/svflags 30");
@@ -771,11 +775,11 @@ void defaultConfig()
 	consoleCommand("/bind 4 IN_LEFT");
 	consoleCommand("/bind 22 IN_BACK");
 	consoleCommand("/bind 7 IN_RIGHT");
-#endif
 	consoleCommand("/bind 80 IN_TURNL");
 	consoleCommand("/bind 79 IN_TURNR");
 	consoleCommand("/bind 82 IN_UP");
 	consoleCommand("/bind 81 IN_DOWN");
+#endif
 	consoleCommand("/bind 40 IN_CHAT");
 	consoleCommand("/bind 56 IN_COMMAND");
 	consoleCommand("/bind 43 IN_STATUS");
