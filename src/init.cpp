@@ -59,7 +59,7 @@ FILE* logfile = nullptr;
 bool steam_init = false;
 
 #ifdef __amigaos4__
-static const char* __attribute__((used)) stackcookie = "$STACK: 100000";
+static const char* __attribute__((used)) stackcookie = "$STACK: 1000000";
 #endif
 
 int initApp(char* title, int fullscreen)
