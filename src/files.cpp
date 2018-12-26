@@ -1797,8 +1797,12 @@ std::string physfsFormatMapName(char* levelfilename)
 
 bool physfsSearchModelsToUpdate()
 {
+#ifdef __amigaos4__
+	std::string modelsDirectory = "PROGDIR:models/models.txt";
+#else
 	std::string modelsDirectory = PHYSFS_getRealDir("models/models.txt");
 	modelsDirectory.append(PHYSFS_getDirSeparator()).append("models/models.txt");
+#endif
 	FILE* fp = openDataFile(modelsDirectory.c_str(), "r");
 	char name[128];
 
@@ -1826,11 +1830,15 @@ bool physfsSearchModelsToUpdate()
 
 bool physfsModelIndexUpdate(int &start, int &end, bool freePreviousModels)
 {
+#ifdef __amigaos4__
+	std::string modelsDirectory = "PROGDIR:models/models.txt";
+#else
 	std::string modelsDirectory = PHYSFS_getRealDir("models/models.txt");
+	modelsDirectory.append(PHYSFS_getDirSeparator()).append("models/models.txt");
+#endif
 	char modelName[128];
 	int startnum = 1;
 	int endnum = nummodels;
-	modelsDirectory.append(PHYSFS_getDirSeparator()).append("models/models.txt");
 	FILE *fp = openDataFile(modelsDirectory.c_str(), "r");
 	for ( int c = 0; !feof(fp); c++ )
 	{

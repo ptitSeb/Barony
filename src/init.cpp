@@ -415,8 +415,12 @@ int initApp(char* title, int fullscreen)
 	GO_SwapBuffers(screen);
 
 	// load models
+#ifdef __amigaos4__
+	std::string modelsDirectory = "PROGDIR:models/models.txt";
+#else
 	std::string modelsDirectory = PHYSFS_getRealDir("models/models.txt");
 	modelsDirectory.append(PHYSFS_getDirSeparator()).append("models/models.txt");
+#endif
 	printlog("loading models from directory %s...\n", modelsDirectory.c_str());
 
 	fp = openDataFile(modelsDirectory.c_str(), "r");

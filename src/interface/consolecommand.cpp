@@ -1282,8 +1282,12 @@ void consoleCommand(char* command_str)
 			}
 		}
 
+#ifdef __amigaos4__
+		std::string modelsDirectory = "PROGDIR:models/models.txt";
+#else
 		std::string modelsDirectory = PHYSFS_getRealDir("models/models.txt");
 		modelsDirectory.append(PHYSFS_getDirSeparator()).append("models/models.txt");
+#endif		
 		FILE *fp = openDataFile(modelsDirectory.c_str(), "r");
 		for ( c = 0; !feof(fp); c++ )
 		{
