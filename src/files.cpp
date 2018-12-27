@@ -491,7 +491,28 @@ void glLoadTexture(SDL_Surface* image, int texnum)
 		SDL_UnlockSurface(image);
 }
 
+#ifdef __amigaos4__
+bool completePath(char *dest, const char * const filename, const char *base) {
+	if (!(filename && filename[0])) {
+		return false;
+	}
+	// Already absolute
+	if (strchr(filename, ':')) {
+		strncpy(dest, filename, PATH_MAX);
+	} else {
+		if(base && base[strlen(base)-1]==':')
+			snprintf(dest, PATH_MAX, "%s%s", base, (filename[0]=='/')?(filename+1):filename);
+		else
+			snprintf(dest, PATH_MAX, "%s/%s", base, filename);
+	}
+	// cleanup "PROGDIR:/bla" to "PROGDIR:bla"
+	char *p;
+	while((p=strstr(dest, ":/")))
+		memmove(p+1, p+2, strlen(p+1));
 
+	return true;
+}
+#else //__amigaos4__
 bool completePath(char *dest, const char * const filename, const char *base) {
 	if (!(filename && filename[0])) {
 		return false;
@@ -510,15 +531,10 @@ bool completePath(char *dest, const char * const filename, const char *base) {
 		return true;
 	}
 #endif
-
-#ifdef __amigaos4__
-	if(base[0]==0 || base[strlen(base)-1]==':')
-		snprintf(dest, PATH_MAX, "%s%s", base, filename);
-	else
-#endif
 	snprintf(dest, PATH_MAX, "%s/%s", base, filename);
 	return true;
 }
+#endif //__amigaos4__
 
 FILE* openDataFile(const char * const filename, const char * const mode) {
 	char path[PATH_MAX];
@@ -1586,9 +1602,10 @@ std::vector<std::string> getLinesFromDataFile(std::string filename)
 {
 	std::vector<std::string> lines;
 	std::string filepath(datadir);
-#ifndef __amigaos4__
-	filepath += "/";
+#ifdef __amigaos4__
+	if(datadir.c_str()[datadir.length()-1]!=':')
 #endif
+	filepath += "/";
 	filepath += filename;
 	std::ifstream file(filepath);
 	if ( !file )
