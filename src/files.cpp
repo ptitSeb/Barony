@@ -1602,11 +1602,15 @@ std::vector<std::string> getLinesFromDataFile(std::string filename)
 {
 	std::vector<std::string> lines;
 	std::string filepath(datadir);
-#ifdef __amigaos4__
-	if(datadir.c_str()[datadir.length()-1]!=':')
-#endif
 	filepath += "/";
 	filepath += filename;
+#ifdef __amigaos4__
+	{
+		size_t idx;
+		while((idx=filepath.find(":/"))!=std::string::npos)
+			filepath.replace(idx, 2, ":");
+	} 
+#endif
 	std::ifstream file(filepath);
 	if ( !file )
 	{
