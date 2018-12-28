@@ -33,6 +33,10 @@
 #include "fmod.h"
 //#include <fmod_errors.h>
 #endif
+#ifdef __amigaos4__
+#include <proto/exec.h>
+#include <proto/dos.h>
+#endif
 
 /*-------------------------------------------------------------------------------
 
@@ -67,6 +71,12 @@ int initApp(char* title, int fullscreen)
 	char name[128];
 	FILE* fp;
 	Uint32 x, c;
+
+#ifdef __amigaos4__
+	// Init specific to AmigaOS4
+	DOSBase=IExec->OpenLibrary("dos.library",0);
+	IDOS = (struct DOSIFace *)IExec->GetInterface(DOSBase, "main", 1, NULL);
+#endif
 
 	// open log file
 	if ( !logfile )
@@ -2259,6 +2269,12 @@ int deinitApp()
 
 	printlog("success\n");
 	fclose(logfile);
+
+#ifdef __amigaos4__
+	IExec->DropInterface((struct Interface *)IDOS);
+	IExec->CloseLibrary(DOSBase);
+#endif
+
 	return 0;
 }
 
