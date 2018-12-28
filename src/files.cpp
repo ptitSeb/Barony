@@ -546,7 +546,7 @@ FILE* openDataFile(const char * const filename, const char * const mode) {
 #ifdef __amigaos4__
 	// Work around as describe there: 
 	// https://github.com/scummvm/scummvm/blob/1a097b1d971e6e3cf3c10f6eb7c7a30def2d2f7c/backends/fs/stdiostream.cpp#L91
-	if(strchr(mode, 'w')==0 && strchr(mode, '+')==0)
+	if(result && strchr(mode, 'w')==0 && strchr(mode, '+')==0)
 		setvbuf(result, NULL, _IOFBF, 8192);
 #endif
 	return result;

@@ -976,7 +976,8 @@ int loadConfig(char* filename)
 #ifdef __amigaos4__
 	// Work around as describe there: 
 	// https://github.com/scummvm/scummvm/blob/1a097b1d971e6e3cf3c10f6eb7c7a30def2d2f7c/backends/fs/stdiostream.cpp#L91
-	setvbuf(fp, NULL, _IOFBF, 8192);
+	if(fp)
+		setvbuf(fp, NULL, _IOFBF, 8192);
 #endif
 
 	// read commands from it
