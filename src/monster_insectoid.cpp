@@ -1428,7 +1428,7 @@ void insectoidMoveBodyparts(Entity* my, Stat* myStats, double dist)
 				{
 					if ( moving )
 					{
-						entity->fskill[0] += std::min(dist * INSECTOIDWALKSPEED, 2.f * INSECTOIDWALKSPEED); // move proportional to move speed
+						entity->fskill[0] += std::min<real_t>(dist * INSECTOIDWALKSPEED, 2.f * INSECTOIDWALKSPEED); // move proportional to move speed
 					}
 					else if ( my->monsterAttack != 0 )
 					{
@@ -1449,7 +1449,7 @@ void insectoidMoveBodyparts(Entity* my, Stat* myStats, double dist)
 				{
 					if ( moving )
 					{
-						entity->fskill[0] -= std::min(dist * INSECTOIDWALKSPEED, 2.f * INSECTOIDWALKSPEED);
+						entity->fskill[0] -= std::min<real_t>(dist * INSECTOIDWALKSPEED, 2.f * INSECTOIDWALKSPEED);
 					}
 					else if ( my->monsterAttack != 0 )
 					{

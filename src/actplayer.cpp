@@ -3904,7 +3904,7 @@ void actPlayer(Entity* my)
 						{
 							if ( moving )
 							{
-								entity->fskill[0] += std::min(dist * PLAYERWALKSPEED, 2.f * PLAYERWALKSPEED); // move proportional to move speed
+								entity->fskill[0] += std::min<real_t>(dist * PLAYERWALKSPEED, 2.f * PLAYERWALKSPEED); // move proportional to move speed
 							}
 							else if ( PLAYER_ATTACK != 0 )
 							{
@@ -3925,7 +3925,7 @@ void actPlayer(Entity* my)
 						{
 							if ( moving )
 							{
-								entity->fskill[0] -= std::min(dist * PLAYERWALKSPEED, 2.f * PLAYERWALKSPEED);
+								entity->fskill[0] -= std::min<real_t>(dist * PLAYERWALKSPEED, 2.f * PLAYERWALKSPEED);
 							}
 							else if ( PLAYER_ATTACK != 0 )
 							{
