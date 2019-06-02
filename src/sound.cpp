@@ -440,23 +440,19 @@ bool OpenALSoundON = true;
 
 void OPENAL_RemoveChannelGroup(OPENAL_SOUND *channel, OPENAL_CHANNELGROUP *group);
 
-static void private_OPENAL_Channel_Stop(OPENAL_SOUND* channel) {
+static void private_OPENAL_Channel_Stop(OPENAL_SOUND* channel, bool bStop) {
 	// stop and delete Sound (channel)
 	int queued;
 	channel->stream_active = false;
-	alSourceStop(channel->id);
+	if(bStop)
+		alSourceStop(channel->id);
 	if(channel->group)
 		OPENAL_RemoveChannelGroup(channel, channel->group);
 	if(channel->buffer->stream)
 		openal_oggrelease(channel);
-	else {
-		int queued;
-		alGetSourcei(channel->id, AL_BUFFERS_QUEUED, &queued);
-		while(queued--) {
-			ALuint buffer;
-			alSourceUnqueueBuffers(channel->id, 1, &buffer);
-		}
-	}
+	/*else
+		alSourcei(channel->id, AL_BUFFER, 0);*/
+
 	alDeleteSources(1, &channel->id);
 	//free(channel);
 	channel->buffer = NULL;
@@ -484,7 +480,7 @@ int OPENAL_ThreadFunction(void* data) {
 				ALint state = 0;
 				alGetSourcei(openal_sounds[i].id, AL_SOURCE_STATE, &state);
 				if(!(state==AL_PLAYING || state==AL_PAUSED || state==AL_INITIAL)) {
-					private_OPENAL_Channel_Stop(&openal_sounds[i]);
+					private_OPENAL_Channel_Stop(&openal_sounds[i], false);
 					if (lower_freechannel > i)
 						lower_freechannel = i;
 				}
@@ -557,7 +553,7 @@ int closeOPENAL()
 	// stop all remaining sound
 	for (int i=0; i<upper_unfreechannel; i++) {
 		if(openal_sounds[i].active /*&& !openal_sounds[i].buffer->stream*/) {
-			private_OPENAL_Channel_Stop(&openal_sounds[i]);
+			private_OPENAL_Channel_Stop(&openal_sounds[i], true);
 		}
 	}
 
@@ -586,7 +582,7 @@ static int get_firstfreechannel()
 	while((i>0) && (!openal_sounds[i].buffer->stream))
 		--i;
 
-	private_OPENAL_Channel_Stop(&openal_sounds[i]);
+	private_OPENAL_Channel_Stop(&openal_sounds[i], true);
 
 	return i;
 }
@@ -699,7 +695,7 @@ void OPENAL_Channel_SetVolume(OPENAL_SOUND *channel, float f) {
 void OPENAL_ChannelGroup_Stop(OPENAL_CHANNELGROUP* group) {
 	for (int i = 0; i< group->num; i++) {
 		if (group->sounds[i])
-			alSourceStop( group->sounds[i]->id );
+			OPENAL_Channel_Stop( group->sounds[i] );
 	}
 }
 
@@ -850,7 +846,7 @@ void OPENAL_Channel_Stop(void* chan) {
 	}
 
 	int i = channel->indice;
-	private_OPENAL_Channel_Stop(channel);
+	private_OPENAL_Channel_Stop(channel, true);
 	if (lower_freechannel > i)
 		lower_freechannel = i;
 
